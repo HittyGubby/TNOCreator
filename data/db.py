@@ -5,7 +5,7 @@ def insert_image(cursor, filename, data):
     cursor.execute("INSERT INTO images (name, data) VALUES (?, ?)", (filename, data))
 
 def main():
-    db = sqlite3.connect('newsimage.db')
+    db = sqlite3.connect('image.db')
     cursor = db.cursor()
 
     folder_path = '.'
