@@ -29,7 +29,7 @@ Current Dev Progress: **Adding Components**
 
 - [x] Translatable and componentized panel widgets for customization
 
-Well but if you insist to [preview](https://hittygubby.github.io/TNOCreator-Web/) ... 
+Well but if you insist to [preview](https://hittygubby.github.io/TNOCreator/) ... 
 
 btw I really HATE separating HTML with CSS, just bringing out so much inconvenience (especially for simple sites like this one)
 
