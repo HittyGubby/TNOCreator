@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/x-icon" href="template/logo_tno.png">
+    <title>TNO Creator</title>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <link rel="stylesheet" href="js/jquery-ui.css">
+    <script src="index.js"></script>
+
+    <script>
+        $(function(){$("#tabs").tabs();});
+        $(function(){$(".draggable").draggable();});
+        $(function(){$(".resizable").resizable();});
+    </script>
+
+    <style>
+    @font-face {font-family: Bombardier;src: url(fonts/BOMBARD_.ttf);}
+    @font-face {font-family: Aldrich;src: url(fonts/Aldrich-Regular.ttf);}
+    @font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf);}
+    @font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf);}
+    @font-face {font-family: FZWen;src: url(fonts/FZWH.TTF);}
+    #basics input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
+    #poplist input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 58%;  float: right;}
+    .list {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px; width: 250px; float: right;}
+    .checkbox {color: #cccccc;z-index: 255; border: none; width: 150px; height: 34px; font-family:Aldrich,FZRui;}
+    *  {color: #cccccc;}
+    </style>
+
+</head>
+<body bgcolor="#333333">
+<div style="display: flex; flex-direction: row;user-select: none;"onload="loaddefault()">
+
+    <div>
+        <img src="template/diplo_leader_frame.png" style="position: relative;z-index: 1;">
+        <div style="position:absolute; top: 21px; left: 30px; height: 55px; width: 90px; z-index: 2;">
+           <img src="template/flag_overlay.png" style="position:absolute; top:0; left:0;z-index: 1;height: inherit; width: inherit;">
+           <img id="flag" src="flags/GER.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
+        </div>
+        <div style="position:absolute; top: 85px; left: 15px; height: 160px; width: 120px; z-index: 0;">
+            <img id="portrait" src="leaders/Portrait_Germany_Reichstag_Emergency_Council.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
+        </div>
+    </div>
+
+    <div style="display: flex;flex-direction: row; flex-wrap: nowrap;">
+        <img src="template/diplo_upper_win_bg.png" style="position: relative;z-index: 2;margin-left: -10px;">
+        <div style="position:absolute; top: 48px; left: 185px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img id="ideologypic" src="ideology/national_socialism_group.png" style="position:absolute;">
+        </div>
+        <div style="position:absolute; top: 48px; left: 500px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img id="factionpic" src="faction/Leader-Einheitspakt.png" style="position:absolute;scale: 0.6;">
+        </div>
+        <div style="position:absolute; top: 230px; left: 385px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img src="template/pol_goal_progress_frame.png" style="position:absolute;">
+            <img src="template/diplo_goal_button.png" style="position:absolute; top: -50px;">
+        </div>
+        <div style="position:absolute; top: 227px; left: 268px; z-index: 3;" >
+            <img id="progressbar" src="template/pol_goal_progress.png" style="position:absolute; width: 0px;height: 6px;">
+        </div>
+        <div style="position:absolute; top: 210px; left: 187px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img id="focuspic" src="focus/goal_unknown.png" style="position:absolute;scale: 0.9;">
+        </div>
+        <div style="position:absolute; top: 80px; left: 137px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img src="template/bck_shadow.png" style="position:absolute;scale: 0.6;z-index: 0;">
+            <div id="piechart" style="width: 100px;height: 100px; border-radius: 50%;background:none; scale: 0.6;
+             z-index: 4;"></div>
+            <img src="template/pol_piechart_overlay_63x63.png" style="position:absolute;scale: 0.45;z-index: 5;">
+        </div>
+        <div style="z-index: 3;position: absolute; left: 230px; inline-size: 1000px; color: #cccccc;font-family:Bombardier,FZWen; font-size: 20px;">
+            <p id="country" style="position: absolute; top: -8px;">Großgermanisches Reich</p>
+            <p id="faction" style="position: absolute; top: 11px;">Enheitspakt</p>
+            <p id="leader" style="position: absolute; top: 30px">Reichstag Emergency Council</p>
+        </div>
+        <div style="position: absolute; top:93px;left: 247px; inline-size: 1000px; font-family:Aldrich,FZRui; font-size: 21px;z-index: 3;">
+            <p id="party" style="position: absolute; top: -8px;color: #9ccccc;">NSDAP</p>
+            <p id="ideology" style="position: absolute; top: 17px;color: #9ccccc;">National Socialism</p>
+            <p id="election" style="position: absolute; top: 42px;color: #9ccccc;">No Elections</p>
+            <div style="position:absolute; inline-size: 1000px;display: flex; left: -360px; top:115px; justify-content: center; align-items: center;">
+                <p id="focus" style="position: absolute;color: #9ccccc;">The Reich's Legacy</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="draggable" id="econ" style=" position: absolute; left: 532px;top: 10px; z-index: 4;user-select: none;" onclick="dragElement(this)" ondrag="dragElement(this)">
+        <img src="template/diplo_econ_bg.png" style="position: relative;z-index: 2;margin-left: 7px;">
+        <div style="position:relative; top: -38px; left: 30px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img id="econsubpic" src="econ/Subtypes/Gelenkte_Wirtschaft.png" style="position:absolute;">
+        </div>
+        <div style="position:relative; top: -38px; left: 90px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+            <img id="econpic" src="econ/EHP_GER.png" style="position:absolute;">
+        </div>
+        <div style="cursor: move; position: relative; left: 20px; top: -78px;">
+        <p style="font-family:Bombardier,FZWen; font-size: 20px; color:#cccccc; position: absolute; z-index: 3;">Economy</p>     
+    </div>
+</div>
+
+<div class="draggable resizable" id="desc" style="font-family:Aldrich,FZRui; font-size: 12px; left: 12px;top: 255px; z-index: 4; line-height: 15px; color:#cccccc;background-color: #000c13;user-select: none; position: absolute; z-index: 3; width: 286px;word-wrap:break-word; height: auto;outline: 1px solid #7caaaa; padding: 7px;min-height:min-content; overflow: hidden;" onclick="dragElement(this)" ondrag="dragElement(this)">
+    <span id="leaderdesc" style="color:#cccc00"></span><br>
+    <span style="color:#cccccc">leader of </span>
+        <div style="margin: 0px 0px 0px 9px; position:absolute; z-index: 3;display: inline; justify-content: center; align-items: center; height: 13px; width: 20px;" >
+            <img id="descflag" style="left: 0px; margin: 0 -10px; height: inherit; width: inherit;">
+        </div>
+    <span id="countrydesc" style="color:#cccc00;margin-left: 20px;"></span><br>
+    <span id="detaildesc" style="white-space: pre-line">------------------------------------------------------------
+The Führer has tragically passed, and the Reich was shocked by the news. After all, who could expect such an invincible man to die?</span>
+</div>
+
+<div id="sidebar" style="outline: 1px solid #cccc0088; font-family:Aldrich,FZRui; transition: 0.3s; transition-timing-function: ease-in-out; height: 100%; width: max-content; position: fixed;z-index: 255;top: 0;right: 0;color: #cccccc; background-color: #00000077;overflow-x: hidden; line-height: 27px; font-size: 15px; user-select: none;scrollbar-width: none; -webkit-scrollbar:none">
+
+    <div id="tabs" style="font-family: Aldrich,FZRui; outline: none; background-color: #00000077;">
+        <ul style="background-color: #00000077;">
+          <li style="background-color: #338888;"><a href="#basics">Basics</a></li>
+          <li style="background-color: #338888;"><a href="#poplist">Popularity</a></li>
+          <li style="background-color: #338888;"><a href="#pictures">Pictures</a></li>
+          <li style="background-color: #338888;"><a href="#description">Description</a></li>
+        </ul>
+        <div id="basics">
+            <label>Country:</label><br><input id="countryinput" placeholder="Country Name"><br>
+            <label>Faction:</label><br><input id="factioninput" placeholder="Faction Name"><br>
+            <label>Leader:</label><br><input id="leaderinput" placeholder="Leader Name"><br><br>
+            <label>Party:</label><br><input id="partyinput" placeholder="Party Name"><br>
+            <label>Ideology:</label><br><input id="ideologyinput" placeholder="Ideology Name"><br>
+            <label>Elections:</label><br><input id="electioninput" placeholder="Elections:"><br><br>
+            <label>Focus:</label><br><input id="focusinput" placeholder="National Focus">
+            <br><br>
+            <button class="checkbox" id="checkboxdesc" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Desc</button>
+            <button class="checkbox" id="checkboxecon" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Econ</button>
+            <audio id="sfxcheck" src="sfx/click_checkbox.wav" preload="auto"></audio>
+        </div>
+        <div id="poplist" style="line-height: 30px;">
+            <label style="color: #cccc00;">Chart Angle:</label><input><br>
+            <label>Nihilism:</label><input><br>
+            <label>Esoteric Nazism:</label><input><br>
+            <label>Ultranationalism:</label><input><br>
+            <label>National Socialism:</label><input><br>
+            <label>Fascism:</label><input><br>
+            <label>Despotism:</label><input><br>
+            <label>Paternalism:</label><input><br>
+            <label>Conservatism:</label><input><br>
+            <label>Liberalism:</label><input><br>
+            <label>Progressivism:</label><input><br>
+            <label>Socialism:</label><input><br>
+            <label>Communism:</label><input><br>
+        </div>
+
+        <div id="pictures">
+            <label>Country Flags:</label>
+            <select onchange="selectflag(this)" id="flaglist" class="list" style="font-family: Aldrich,FZRui;">
+            </select><br>
+            <label>Ideology:</label>
+            <select onchange="select(this)" id="ideologylist" class="list" style="font-family: Aldrich,FZRui;">
+            </select><br>
+            <label>Faction:</label>
+            <select onchange="select(this)" id="factionlist" class="list" style="font-family: Aldrich,FZRui;">
+            </select><br>
+        </div>
+
+
+        <div id="description">
+            <label>Leader Desc:</label><br>
+            <textarea id="detaildescinput" class="input" oninput="update(this)" placeholder="Description:" style="height: 15px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;overflow-wrap: break-word; min-height: 10lh; width: 100%;"></textarea>
+        </div>
+      </div>
+
+    <audio id="sfxclosewindow" src="sfx/click_window_close.wav" preload="auto"></audio>
+    <audio id="sfxopenwindow" src="sfx/click_window_open.wav" preload="auto"></audio>
+    <button id="sidebarbutton" style="color: #cccccc;position: fixed;bottom: 10px;right: 10px;z-index: 255; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="sidebartoggle()">Hide Editor</button>
+</div>
+</body>
+</html>
