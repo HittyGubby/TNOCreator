@@ -28,6 +28,9 @@
     #poplist input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 58%;  float: right;}
     .list {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px; width: 250px; float: right;}
     .checkbox {color: #cccccc;z-index: 255; border: none; width: 150px; height: 34px; font-family:Aldrich,FZRui;}
+    .autocomp :hover{background-color: #e9e9e9;}
+    .autocomp {max-height: 200px;overflow-y: auto;overflow-x: hidden;}
+    .queryinput {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 70%;  float: right;}
     *  {color: #cccccc;}
     </style>
 
@@ -38,11 +41,11 @@
     <div>
         <img src="template/diplo_leader_frame.png" style="position: relative;z-index: 1;">
         <div style="position:absolute; top: 21px; left: 30px; height: 55px; width: 90px; z-index: 2;">
-           <img src="template/flag_overlay.png" style="position:absolute; top:0; left:0;z-index: 1;height: inherit; width: inherit;">
-           <img id="flag" src="preset/GER.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
+           <img src="template/flag_overlay.png" style="position:absolute; top:0; left:0;z-index: 1;height: inherit; width: inherit; opacity: 95%;">
+           <img id="flagpic" src="preset/GER.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
         </div>
         <div style="position:absolute; top: 85px; left: 15px; height: 160px; width: 120px; z-index: 0;">
-            <img id="portrait" src="preset/Portrait_Germany_Reichstag_Emergency_Council.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
+            <img id="portraitpic" src="preset/Portrait_Germany_Reichstag_Emergency_Council.png" style="position:absolute; top:0; left:0; z-index: 0; height: inherit; width: inherit;">
         </div>
     </div>
 
@@ -80,7 +83,7 @@
             <p id="ideology" style="position: absolute; top: 17px;color: #9ccccc;">National Socialism</p>
             <p id="election" style="position: absolute; top: 42px;color: #9ccccc;">No Elections</p>
             <div style="position:absolute; inline-size: 1000px;display: flex; left: -360px; top:115px; justify-content: center; align-items: center;">
-                <p id="focus" style="position: absolute;color: #9ccccc;">The Reich's Legacy</p>
+                <p id="focustext" style="position: absolute;color: #9ccccc;">The Reich's Legacy</p>
             </div>
         </div>
     </div>
@@ -127,7 +130,7 @@ The Führer has tragically passed, and the Reich was shocked by the news. After 
             <label>Party:</label><br><input id="partyinput" placeholder="Party Name"><br>
             <label>Ideology:</label><br><input id="ideologyinput" placeholder="Ideology Name"><br>
             <label>Elections:</label><br><input id="electioninput" placeholder="Elections:"><br><br>
-            <label>Focus:</label><br><input id="focusinput" placeholder="National Focus">
+            <label>Focus:</label><br><input id="focustextinput" placeholder="National Focus">
             <br><br>
             <button class="checkbox" id="checkboxdesc" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Desc</button>
             <button class="checkbox" id="checkboxecon" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Econ</button>
@@ -150,16 +153,17 @@ The Führer has tragically passed, and the Reich was shocked by the news. After 
         </div>
 
         <div id="pictures">
-            <label>Country Flags:</label>
-            <select onchange="selectflag(this)" id="flaglist" class="list" style="font-family: Aldrich,FZRui;">
-            </select><br>
-            <label>Ideology:</label>
-            <select onchange="select(this)" id="ideologylist" class="list" style="font-family: Aldrich,FZRui;">
-            </select><br>
-            <label>Faction:</label>
-            <select onchange="select(this)" id="factionlist" class="list" style="font-family: Aldrich,FZRui;">
-            </select><br>
+            <label>Flag:</label>
+            <input class="queryinput" id="flaginput" placeholder="Search for flags..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompflag" style="max-width: 100%;"></div>
+            <label>Portrait:</label>
+            <input class="queryinput" id="portraitinput" placeholder="Search for leaders..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompportrait" style="max-width: 100%;"></div>
+            <label>Focus:</label>
+            <input class="queryinput" id="focusinput" placeholder="Search for focuses..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompfocus" style="max-width: 100%;"></div>
         </div>
+        
 
 
         <div id="description">
