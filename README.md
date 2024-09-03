@@ -2,6 +2,8 @@
 *PLANNED TNO customized showcase generator..? By a total frontend noob(
 
 ##### Installation (Im not sure if anyone would really deploy this)
+0.Clone Repo **used git lfs for database files, so you need to install git-lfs and `git-lfs clone *repo*`**
+
 1. Install NodeJS
 
 2. cd to repo folder and execute
@@ -16,6 +18,8 @@ npm install path
 3. Run server with default port 5500
 
 `node index.mjs`
+
+
 
 Current Dev Progress: **Adding Components**
 
@@ -47,9 +51,7 @@ Current Dev Progress: **Adding Components**
 
 - [x] Translatable and componentized panel widgets for customization
 
-Well but if you insist to [preview](https://hittygubby.github.io/TNOCreator/) ... 
-
-btw I really HATE separating HTML with CSS, just bringing out so much inconvenience (especially for simple sites like this one)
+I really HATE separating HTML with CSS, just bringing out so much inconvenience (especially for simple sites like this one)
 
 ... so if any of you guys want to refactor due to this, fork and dont send PR...
 
