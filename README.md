@@ -1,4 +1,4 @@
-### TNOCreator-Web
+### TNOCreator
 *PLANNED TNO customized showcase generator..? By a total frontend noob(
 
 Current Dev Progress: **Adding Components**
@@ -15,7 +15,9 @@ Current Dev Progress: **Adding Components**
 
 - [x] Add button hover gfx (maybe not? we are not refactoring hoi4 anyways lmao)
 
-- [ ] Drag Resize desc width..?
+- [x] Drag Resize desc width..?
+
+- [x] Use database instead of discrete asset pics
 
 - [ ] Add screenshot and save
 
@@ -23,7 +25,7 @@ Current Dev Progress: **Adding Components**
 
 - [ ] Multilingual support (well technically only the "leader of " and "Economy" string is not editable so pretty lame...)
 
- Add hover text menu(? maybe not since this is a showcase not refactoring hoi4!!1!)
+- [x] Add hover text menu(? maybe not since this is a showcase not refactoring hoi4!!1!)
 
 - [x] Auto set top priority on window click
 

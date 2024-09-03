@@ -1,10 +1,12 @@
+var server = 'http://127.0.0.1:5000';
+
 window.onload = function(){
   
-  //sync texts    
+    //sync texts    
     document.getElementById("progressbar").style.width=Math.round(Math.random()*237)+"px";
     document.getElementById("leaderdesc").innerHTML = document.getElementById("leader").innerHTML;
     document.getElementById("countrydesc").innerHTML = document.getElementById("country").innerHTML;
-    document.getElementById("descflag").src = document.getElementById("flag").src;
+    document.getElementById("descflag").src = document.getElementById("flagpic").src;
    
     //add attribs
     updateattrib('poplist', 'input', {'oninput': 'updatepop()','placeholder': 'Any Positive Number'});
@@ -18,29 +20,38 @@ window.onload = function(){
     const c = document.getElementById("poplist").children;
     for (let i=0; i<values.length; i++) {c[3*i+1].value=values[i];}
     updatepop();
+
+    //init pic data
+    document.getElementById("flaginput").value = "GER"
+    document.getElementById("portraitinput").value = "Portrait Germany Reichstag Emergency Council"
+    document.getElementById("focusinput").value = "goal unknown"
       
     //enumerate assets and append to list
-    var server = 'http://127.0.0.1:3000/'
-    enumfiles('flaglist',server+'flags');
-    enumfiles('ideologylist',server+'ideology');
-    enumfiles('factionlist',server+'faction');
-
-    //load default list item
-    setTimeout(() => {document.querySelector('option[value="GER.png"]').setAttribute("selected","selected");}, 200);
-    setTimeout(() => {document.querySelector('option[value="national_socialism_group.png"]').setAttribute("selected","selected");}, 200); 
-    setTimeout(() => {document.querySelector('option[value="Leader-Einheitspakt.png"]').setAttribute("selected","selected");}, 200); 
+    enumfiles('flag');
+    enumfiles('portrait');
+    enumfiles('focus');
 }
 
 
-function enumfiles(list,path){ //path is like '/files'
-  fetch(path).then(response => response.json()).then(files => {
-      const dropdown = document.getElementById(list);
+function enumfiles(list){
+  document.getElementById(`${list}input`).addEventListener('input', function() {
+  const query = this.value;
+  if (!query) {document.getElementById(`autocomp${list}`).innerHTML = '';return;}
+  fetch(`/api/${list}?q=${query}`)
+      .then(response => response.json())
+      .then(files => {
+          const autocompleteList = document.getElementById(`autocomp${list}`);
+          autocompleteList.innerHTML = '';
           files.forEach(file => {
-              const option = document.createElement('option');
-                option.value = file;
-                option.textContent = file.replace(".png","").replace(/_/g," ");
-                dropdown.appendChild(option);
-});})}
+              const item = document.createElement('div');
+              item.textContent = file.name.replace(/_/g," ").replace(".png","");
+              item.addEventListener('click', () => {
+                  document.getElementById(`${list}input`).value = file.name.replace(/_/g," ").replace(".png","");
+                  document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
+                  autocompleteList.innerHTML = '';});
+              autocompleteList.appendChild(item);});})
+      .catch(error => console.error('Error fetching files:', error));});
+}
 
 function updateattrib(parent,child,attribs){
   const c = document.getElementById(parent).getElementsByTagName(child);
@@ -67,15 +78,6 @@ function updatepop() {
     rgb(157, 157, 157) 0 ${scaledAngles[6]}deg,rgb(0, 0, 214) 0 ${scaledAngles[7]}deg,
     rgb(29, 157, 255) 0 ${scaledAngles[8]}deg,rgb(255, 0, 174) 0 ${scaledAngles[9]}deg,
     rgb(204, 0, 0) 0 ${scaledAngles[10]}deg,rgb(149, 0, 0) 0 ${scaledAngles[11]}deg)`;
-}
-
-
-function selectflag(div){
-  document.getElementById("flag").src = "flags/"+div.value;
-  document.getElementById("descflag").src = "flags/"+div.value;
-}
-function select(div){
-  document.getElementById(div.id.replace("list","pic")).src = div.id.replace("list","")+"/"+div.value;
 }
 
 

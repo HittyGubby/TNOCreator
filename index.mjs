@@ -1,27 +1,41 @@
-import { readdir } from 'fs';
 import express from 'express';
 import cors from 'cors';
+import sqlite3 from 'sqlite3';
+import path from 'path';
+import { dirname } from 'path';
 const app = express();
-const port = 3000;
+const port = 5500;
 
-app.use(cors());
+//app.use(cors());
+app.use(express.static(path.resolve()));
 
-getfile('/flags');
-getfile('/ideology');
-getfile('/faction');
 
-function getfile(path){
-app.get(path, (req, res) => {
-    readdir('.'+path, (err, files) => {
-        if (err) {
-            return res.status(500).send('Unable to scan directory');
-        }
-        res.json(files);
-    });
-});    
+setupDatabaseRoutes('flag');
+setupDatabaseRoutes('portrait');
+setupDatabaseRoutes('focus');
+
+function setupDatabaseRoutes(dbname) {
+    const db = new sqlite3.Database(`data/${dbname}.db`);
+
+    app.get(`/api/${dbname}`, (req, res) => {
+        const query = req.query.q || '';
+        db.all("SELECT name FROM images WHERE name LIKE ?", [`%${query}%`], (err, rows) => {
+            if (err) {return res.status(500).send('Error retrieving images');}
+            res.json(rows);});});
+    app.get(`/api/${dbname}/:name`, (req, res) => {
+        const name = req.params.name;
+        db.get("SELECT data FROM images WHERE name = ?", [name], (err, row) => {
+            if (err) {
+                return res.status(500).send('Error retrieving image');}
+                if (row) {
+                    res.setHeader('Content-Type', 'image/png');
+                    res.send(row.data);
+                } 
+                else {res.status(404).send('Image not found');}});});
 }
 
-
+//flag, focus, newsimage and portrait using db query 
+//faction, ideology, econ type and subtype using dropdown list with direct local file
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
