@@ -1,6 +1,22 @@
 ### TNOCreator
 *PLANNED TNO customized showcase generator..? By a total frontend noob(
 
+##### Installation (Im not sure if anyone would really deploy this)
+1. Install NodeJS
+
+2. cd to repo folder and execute
+
+```
+npm install express
+npm install cors
+npm install sqlite3
+npm install path
+```
+
+3. Run server with default port 5500
+
+`node index.mjs`
+
 Current Dev Progress: **Adding Components**
 
 - [ ] Arranging Elements.. Basically Just a static website

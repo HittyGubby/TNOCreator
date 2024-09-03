@@ -2,13 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import sqlite3 from 'sqlite3';
 import path from 'path';
-import { dirname } from 'path';
 const app = express();
 const port = 5500;
 
-//app.use(cors());
+//app.use(cors());  //uncomment to allow cross origin reqs (separating api and fronted)
 app.use(express.static(path.resolve()));
-
 
 setupDatabaseRoutes('flag');
 setupDatabaseRoutes('portrait');
