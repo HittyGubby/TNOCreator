@@ -11,13 +11,17 @@ app.use(express.static(path.resolve()));
 setupDatabaseRoutes('flag');
 setupDatabaseRoutes('portrait');
 setupDatabaseRoutes('focus');
+setupDatabaseRoutes('econ');
+setupDatabaseRoutes('econsub');
+setupDatabaseRoutes('faction');
+setupDatabaseRoutes('ideology');
 
 function setupDatabaseRoutes(dbname) {
     const db = new sqlite3.Database(`data/${dbname}.db`);
 
     app.get(`/api/${dbname}`, (req, res) => {
         const query = req.query.q || '';
-        db.all("SELECT name FROM images WHERE name LIKE ?", [`%${query}%`], (err, rows) => {
+        db.all(`SELECT name FROM images WHERE name LIKE ?`, [`%${query}%`], (err, rows) => {
             if (err) {return res.status(500).send('Error retrieving images');}
             res.json(rows);});});
     app.get(`/api/${dbname}/:name`, (req, res) => {

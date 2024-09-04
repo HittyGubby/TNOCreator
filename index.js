@@ -25,11 +25,19 @@ window.onload = function(){
     document.getElementById("flaginput").value = "GER"
     document.getElementById("portraitinput").value = "Portrait Germany Reichstag Emergency Council"
     document.getElementById("focusinput").value = "goal unknown"
+    document.getElementById("econinput").value = "EHP GER"
+    document.getElementById("econsubinput").value = "Gelenkte Wirtschaft"
+    document.getElementById("factioninput").value = "Leader-Einheitspakt"
+    document.getElementById("ideologyinput").value = "national socialism group"
       
     //enumerate assets and append to list
     enumfiles('flag');
     enumfiles('portrait');
     enumfiles('focus');
+    enumfiles('econ');
+    enumfiles('econsub');
+    enumfiles('faction');
+    enumfiles('ideology');
 }
 
 
