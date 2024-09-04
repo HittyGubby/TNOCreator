@@ -52,10 +52,10 @@
     <div style="display: flex;flex-direction: row; flex-wrap: nowrap;">
         <img src="template/diplo_upper_win_bg.png" style="position: relative;z-index: 2;margin-left: -10px;">
         <div style="position:absolute; top: 48px; left: 185px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
-            <img id="ideologypic" src="ideology/national_socialism_group.png" style="position:absolute;">
+            <img id="ideologypic" src="preset/national_socialism_group.png" style="position:absolute;">
         </div>
         <div style="position:absolute; top: 48px; left: 500px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
-            <img id="factionpic" src="faction/Leader-Einheitspakt.png" style="position:absolute;scale: 0.6;">
+            <img id="factionpic" src="preset/Leader-Einheitspakt.png" style="position:absolute;scale: 0.6;">
         </div>
         <div style="position:absolute; top: 230px; left: 385px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
             <img src="template/pol_goal_progress_frame.png" style="position:absolute;">
@@ -75,12 +75,12 @@
         </div>
         <div style="z-index: 3;position: absolute; left: 230px; inline-size: 1000px; color: #cccccc;font-family:Bombardier,FZWen; font-size: 20px;">
             <p id="country" style="position: absolute; top: -8px;">Großgermanisches Reich</p>
-            <p id="faction" style="position: absolute; top: 11px;">Enheitspakt</p>
+            <p id="factiontext" style="position: absolute; top: 11px;">Enheitspakt</p>
             <p id="leader" style="position: absolute; top: 30px">Reichstag Emergency Council</p>
         </div>
         <div style="position: absolute; top:93px;left: 247px; inline-size: 1000px; font-family:Aldrich,FZRui; font-size: 21px;z-index: 3;">
             <p id="party" style="position: absolute; top: -8px;color: #9ccccc;">NSDAP</p>
-            <p id="ideology" style="position: absolute; top: 17px;color: #9ccccc;">National Socialism</p>
+            <p id="ideologytext" style="position: absolute; top: 17px;color: #9ccccc;">National Socialism</p>
             <p id="election" style="position: absolute; top: 42px;color: #9ccccc;">No Elections</p>
             <div style="position:absolute; inline-size: 1000px;display: flex; left: -360px; top:115px; justify-content: center; align-items: center;">
                 <p id="focustext" style="position: absolute;color: #9ccccc;">The Reich's Legacy</p>
@@ -93,10 +93,10 @@
 <div class="draggable" id="econ" style=" position: absolute; left: 532px;top: 10px; z-index: 4;user-select: none;" onclick="dragElement(this)" ondrag="dragElement(this)">
         <img src="template/diplo_econ_bg.png" style="position: relative;z-index: 2;margin-left: 7px;">
         <div style="position:relative; top: -38px; left: 30px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
-            <img id="econsubpic" src="econ/Subtypes/Gelenkte_Wirtschaft.png" style="position:absolute;">
+            <img id="econsubpic" src="preset/Gelenkte_Wirtschaft.png" style="position:absolute;">
         </div>
         <div style="position:relative; top: -38px; left: 90px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
-            <img id="econpic" src="econ/EHP_GER.png" style="position:absolute;">
+            <img id="econpic" src="preset/EHP_GER.png" style="position:absolute;">
         </div>
         <div style="cursor: move; position: relative; left: 20px; top: -78px;">
         <p style="font-family:Bombardier,FZWen; font-size: 20px; color:#cccccc; position: absolute; z-index: 3;">Economy</p>     
@@ -125,10 +125,10 @@ The Führer has tragically passed, and the Reich was shocked by the news. After 
         </ul>
         <div id="basics">
             <label>Country:</label><br><input id="countryinput" placeholder="Country Name"><br>
-            <label>Faction:</label><br><input id="factioninput" placeholder="Faction Name"><br>
+            <label>Faction:</label><br><input id="factiontextinput" placeholder="Faction Name"><br>
             <label>Leader:</label><br><input id="leaderinput" placeholder="Leader Name"><br><br>
             <label>Party:</label><br><input id="partyinput" placeholder="Party Name"><br>
-            <label>Ideology:</label><br><input id="ideologyinput" placeholder="Ideology Name"><br>
+            <label>Ideology:</label><br><input id="ideologytextinput" placeholder="Ideology Name"><br>
             <label>Elections:</label><br><input id="electioninput" placeholder="Elections:"><br><br>
             <label>Focus:</label><br><input id="focustextinput" placeholder="National Focus">
             <br><br>
@@ -162,6 +162,18 @@ The Führer has tragically passed, and the Reich was shocked by the news. After 
             <label>Focus:</label>
             <input class="queryinput" id="focusinput" placeholder="Search for focuses..." style="font-family: Aldrich,FZRui;">
             <div class="autocomp" id="autocompfocus" style="max-width: 100%;"></div>
+            <label>Economy:</label>
+            <input class="queryinput" id="econinput" placeholder="Search for economies..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompecon" style="max-width: 100%;"></div>
+            <label>EconSub:</label>
+            <input class="queryinput" id="econsubinput" placeholder="Search for econ subtypes..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompeconsub" style="max-width: 100%;"></div>
+            <label>Faction:</label>
+            <input class="queryinput" id="factioninput" placeholder="Search for factions..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompfaction" style="max-width: 100%;"></div>
+            <label>Ideology:</label>
+            <input class="queryinput" id="ideologyinput" placeholder="Search for ideologies..." style="font-family: Aldrich,FZRui;">
+            <div class="autocomp" id="autocompideology" style="max-width: 100%;"></div>
         </div>
         
 
