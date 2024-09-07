@@ -25,7 +25,7 @@ npm install path
 
 Current Dev Progress: **Adding Components**
 
-- [ ] Arranging Elements.. Basically Just a static website
+- [x] Arranging Elements.. Basically Just a static website
 
 - [x] Add sidebar on right side for data customization
 
@@ -33,7 +33,9 @@ Current Dev Progress: **Adding Components**
 
 - [x] Customize UI pictures
 
-- [ ] Add load preset [from local db or custom config upload&download]
+- [x] Add load preset [from local db or custom config upload&download]
+
+- [ ] Auto remember preset by user cookie (or user account?)
 
  ->maybe auto crawl from tno wiki?
 
@@ -49,7 +51,7 @@ Current Dev Progress: **Adding Components**
 
 - [ ] Add superevent music
 
-- [ ] Multilingual support (well technically only the "leader of " and "Economy" string is not editable so pretty lame...)
+- [x] Multilingual support (well technically only the "leader of " and "Economy" string is not editable so pretty lame...)
 
 - [x] Add hover text menu(? maybe not since this is a showcase not refactoring hoi4!!1!)
 
