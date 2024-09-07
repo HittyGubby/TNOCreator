@@ -20,6 +20,8 @@ npm install path
 `node index.mjs`
 
 
+**Important** Html format text is supported in input boxes
+
 
 Current Dev Progress: **Adding Components**
 
@@ -29,9 +31,13 @@ Current Dev Progress: **Adding Components**
 
 - [x] Add clicking sfx
 
+- [x] Customize UI pictures
+
 - [ ] Add load preset [from local db or custom config upload&download]
 
  ->maybe auto crawl from tno wiki?
+
+ ->maybe add more hoi4 mod ui? 
 
 - [x] Add button hover gfx (maybe not? we are not refactoring hoi4 anyways lmao)
 
