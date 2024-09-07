@@ -15,6 +15,9 @@ setupDatabaseRoutes('econ');
 setupDatabaseRoutes('econsub');
 setupDatabaseRoutes('faction');
 setupDatabaseRoutes('ideology');
+setupDatabaseRoutes('header');
+setupDatabaseRoutes('super');
+setupDatabaseRoutes('news');
 
 function setupDatabaseRoutes(dbname) {
     const db = new sqlite3.Database(`data/${dbname}.db`);
