@@ -22,16 +22,7 @@ window.onload = function(){
     updatepop();
 
     //init pic data
-    document.getElementById("flaginput").value = "GER"
-    document.getElementById("portraitinput").value = "Portrait GER Reichstag Emergency Council"
-    document.getElementById("focusinput").value = "goal unknown"
-    document.getElementById("econinput").value = "EHP GER"
-    document.getElementById("econsubinput").value = "Gelenkte Wirtschaft"
-    document.getElementById("factioninput").value = "Leader-Einheitspakt"
-    document.getElementById("ideologyinput").value = "national socialism group"
-    document.getElementById("headerinput").value = "nazist-Germany"
-    document.getElementById("newsinput").value = "GER german civil war"
-    document.getElementById("superinput").value = "german civil war"
+    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");});
       
     //enumerate assets and append to list
     enumfiles('flag');
@@ -45,9 +36,209 @@ window.onload = function(){
     enumfiles('news');
     enumfiles('header');
     
-  document.getElementById('downloadJson').addEventListener('click', () => {
-  const divData = 
-  {
+    document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
+    document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
+    const d = new Date();
+    const u = username==="" ? username : " - "+username;
+    document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+    if(document.cookie!=""){
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('username').style.display = 'none';
+      document.getElementById('password').style.display = 'none';
+      document.getElementById('loginunfoldButton').style.display = 'none';
+      document.getElementById('loginButton').style.display = 'none';
+      document.getElementById('logoutButton').style.display = 'inline-block';
+      autoLogin()}
+}
+// main end
+
+//user login section
+var username = "";
+
+async function autoLogin() {
+  const response = await fetch('/auto-login', {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      credentials: 'same-origin' // Include cookies in the request
+  });
+
+  const data = await response.json();
+  if (data.success) {
+      username = data.username;
+      loadPresets(data.username);
+      const d = new Date();
+      const u = username==="" ? username : " - "+username;
+      document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+  } else {
+      console.log('Auto-login failed:', data.message);
+  }
+}
+
+
+async function loginunfold(){
+  document.getElementById('username').style.display = 'inline-block';
+  document.getElementById('password').style.display = 'inline-block';
+  document.getElementById('loginunfoldButton').style.display = 'none';
+  document.getElementById('loginButton').style.display = 'inline-block';
+}
+
+async function login(){
+  const user = document.getElementById('username').value;
+  const pass = document.getElementById('password').value;
+  const response = await fetch('/login',{method:'POST',headers: {'Content-Type':'application/json'},body:JSON.stringify({user, pass})});
+  const data = await response.json();
+  if (data.success) {
+      document.cookie = `session=${data.cookie}; path=/`;
+      username = user;
+      loadPresets(user);
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('username').style.display = 'none';
+      document.getElementById('password').style.display = 'none';
+      document.getElementById('loginunfoldButton').style.display = 'none';
+      document.getElementById('loginButton').style.display = 'none';
+      document.getElementById('logoutButton').style.display = 'inline-block';
+      const d = new Date();
+      const u = username==="" ? username : " - "+username;
+      document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+    } else if (data.message === 'User not found') {
+      if (confirm('User not found. Register?')) {
+          const registerResponse = await fetch('/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ user, pass })
+          });
+
+          const registerData = await registerResponse.json();
+          if (registerData.success) {
+              document.cookie = `session=${registerData.cookie}; path=/`;
+              alert('Registered');
+              username = user;
+              loadPresets(user);
+              document.getElementById('username').value = '';
+              document.getElementById('password').value = '';
+              document.getElementById('username').style.display = 'none';
+              document.getElementById('password').style.display = 'none';
+              document.getElementById('loginunfoldButton').style.display = 'none';
+              document.getElementById('loginButton').style.display = 'none';
+              document.getElementById('logoutButton').style.display = 'inline-block';
+              const d = new Date();
+              const u = username==="" ? username : " - "+username;
+              document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+          } else {
+              alert('Registration failed!');
+          }
+      }
+  } else {
+      alert('Login failed!');
+  }
+  }
+
+function logout(){
+  document.cookie = "session= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
+    username = '';
+    document.getElementById('presetList').innerHTML = '';
+    document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+    document.getElementById('loginButton').style.display = 'none';
+    document.getElementById('loginunfoldButton').style.display = 'inline-block';
+    document.getElementById('logoutButton').style.display = 'none';
+    document.getElementById('username').style.display = 'none';
+document.getElementById('password').style.display = 'none';
+const d = new Date();
+const u = username==="" ? username : " - "+username;
+document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+}
+
+function base64Encode(str) {return btoa(unescape(encodeURIComponent(str)));}
+function jsonupload(jsonData,method){
+  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':method,'name':base64Encode(document.getElementById('filenameinput').value)},body:jsonData})}
+
+  function loadPresets(user) {
+    const params = new URLSearchParams({username: encodeURIComponent(user)});
+    fetch(`/presets?${params.toString()}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'cookie': document.cookie.split('=')[1]
+        }
+    })
+    .then(response => response.json())
+    .then(presets => {
+        presets.sort((a, b) => b.id - a.id);
+
+        const dropdown = document.getElementById('presetList');
+        dropdown.innerHTML = '';
+        presets.forEach(preset => {
+            const option = document.createElement('div');
+            option.textContent = preset.name;
+            option.style.borderBottom = '1px solid #333333';
+            option.className = 'preset-entry';
+            option.addEventListener('click', () => {
+                document.getElementById('filenameinput').value = preset.name;
+                jsonupdate(JSON.parse(preset.data));
+            });
+            dropdown.appendChild(option);
+
+            const del = document.createElement('button');
+            del.style = "transition: 0.3s; background: url('template/closebutton_small.png') no-repeat; border: none; width: 26px; height: 26px; float: right;";
+            del.addEventListener('click', (event) => {
+                event.stopPropagation();
+                if (confirm("Sure to remove preset?")) {
+                    fetch(`/presetsdel?${params.toString()}`, {
+                        method: 'GET',
+                        headers: {'id': preset.id}
+                    });
+                    dropdown.removeChild(option);
+                }
+            });
+            option.appendChild(del);
+        });
+    });
+}
+
+//user login section end
+
+
+function uploadjson(event){
+  const file = event.target.files[0];
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          const jsonData = JSON.parse(e.target.result);
+          jsonupdate(jsonData);
+          jsonupload(JSON.stringify(returnjson()),'upload');};
+          reader.readAsText(file);}}
+
+function downloadjson(){
+  const divData = returnjson();
+  const jsonData = JSON.stringify(divData);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${document.getElementById('filenameinput').value}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  jsonupload(JSON.stringify(returnjson()),'download');
+}
+
+function savejson(){
+  if(username != ""){
+  //jsonupload(JSON.stringify(returnjson()),'save');
+  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':'save','name':base64Encode(document.getElementById('filenameinput').value)},body:JSON.stringify(returnjson())}).then(response => {if (response.ok) {alert('Saved!');loadPresets(username)} else {alert('FAILED!!1!')}})
+  }
+  else alert('Cloud Saves requires you to log in.')
+}
+
+function returnjson(){
+  const o = {
     basics: fetchdata('basics','input'),
     data: fetcharr(),
     focusprog: document.getElementById("focusproginput").value,
@@ -75,73 +266,50 @@ window.onload = function(){
       newswindow: fetchifcheck('checkboxnewswindow'),
       superwindow: fetchifcheck('checkboxsuperwindow'),
     },
-    lang: lang
+    lang: lang,
+    background: document.body.bgColor
   }
-  
-  const jsonData = JSON.stringify(divData);
-  const blob = new Blob([jsonData], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  fetch('/preset', {method: 'POST',headers: {'Content-Type': 'application/json'},body: jsonData})
-  .then(response => {if (response.ok) {console.log('Data stored successfully');} 
-  else {console.error('Error storing data');}});});
-
-document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
-document.getElementById('fileInput').addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-          const jsonData = JSON.parse(e.target.result);
-
-          for (const e in jsonData.basics){document.getElementById(e).value = jsonData.basics[e];}
-           document.getElementById("focusproginput").value=jsonData.focusprog;
-           for (const e in jsonData.picture){document.getElementById(e).value = jsonData.picture[e].replace(/_/g," ").replace(".png","");}
-           for (const e in jsonData.picture)
-            {document.getElementById(e.replace("input","pic")).src = `api/${e.replace("input","")}/${jsonData.picture[e]}`;}
-           for (const e in jsonData.desc){document.getElementById(e).value = jsonData.desc[e];}
-           for (const e in jsonData.desclong){document.getElementById(e).value = jsonData.desclong[e];}
-           for (let i=0; i<13; i++){document.getElementById("poplist").children[3*i+1].value=jsonData.data[i];}
-           for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.left = jsonData.pos[e][0];}
-           for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.top = jsonData.pos[e][1];}
-           for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.width = jsonData.size[e][0];}
-           for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.height = jsonData.size[e][1];}
-           for (const e in jsonData.pri){document.getElementById(e.replace("pri","")).style.zIndex = jsonData.pri[e];}
-           document.getElementById("main").style.zIndex = highestZIndex+10000;
-           document.getElementById("sidebar").style.zIndex = highestZIndex+20000;
-           document.getElementById("sidebarbutton").style.zIndex = highestZIndex+30000;
-           for (const e in jsonData.show){
-            if (jsonData.show[e]){document.getElementById(e).style.display = "";
-              document.getElementById(`checkbox${e}`).style.background = "url('template/generic_checkbox_checked.png') no-repeat";
-            }
-            else {
-              document.getElementById(e).style.display="none";
-              document.getElementById(`checkbox${e}`).style.background = "url('template/generic_checkbox_unchecked.png') no-repeat";}
-          }
-          document.getElementById("lang").innerHTML = jsonData.lang;
-          if (jsonData.lang == "中文") langchtocn();
-          else langchtoen();
-
-           updatepop();
-           updatetrig('basics', 'input');
-           updatetrig('description', 'input');
-           updatetrig('description', 'textarea');
-           updateprog(document.getElementById("focusproginput"));
-           document.getElementById("descflag").src=document.getElementById("flagpic").src;
-
-
-          // Send the data to the server to update the database
-          fetch('/upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(jsonData)})
-              .then(response => {if (response.ok) {console.log('Data uploaded successfully');} 
-              else {console.error('Error uploading data');}});};reader.readAsText(file);}});
-
+  return o;
 }
+
+function jsonupdate(jsonData){
+  for (const e in jsonData.basics){document.getElementById(e).value = jsonData.basics[e];}
+  document.getElementById("focusproginput").value=jsonData.focusprog;
+  for (const e in jsonData.picture){document.getElementById(e).value = jsonData.picture[e].replace(/_/g," ").replace(".png","");}
+  for (const e in jsonData.picture)
+   {document.getElementById(e.replace("input","pic")).src = `api/${e.replace("input","")}/${jsonData.picture[e]}`;}
+  for (const e in jsonData.desc){document.getElementById(e).value = jsonData.desc[e];}
+  for (const e in jsonData.desclong){document.getElementById(e).value = jsonData.desclong[e];}
+  for (let i=0; i<13; i++){document.getElementById("poplist").children[3*i+1].value=jsonData.data[i];}
+  for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.left = jsonData.pos[e][0];}
+  for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.top = jsonData.pos[e][1];}
+  for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.width = jsonData.size[e][0];}
+  for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.height = jsonData.size[e][1];}
+  for (const e in jsonData.pri){document.getElementById(e.replace("pri","")).style.zIndex = jsonData.pri[e];}
+  document.getElementById("main").style.zIndex = highestZIndex+100;
+  document.getElementById("sidebar").style.zIndex = highestZIndex+200;
+  document.getElementById("sidebarbutton").style.zIndex = highestZIndex+300;
+  document.body.bgColor = jsonData.background;
+  document.getElementById('backgroundinput').value = jsonData.background
+  for (const e in jsonData.show){
+   if (jsonData.show[e]){document.getElementById(e).style.display = "";
+     document.getElementById(`checkbox${e}`).style.background = "url('template/generic_checkbox_checked.png') no-repeat";}
+   else {document.getElementById(e).style.display="none";
+     document.getElementById(`checkbox${e}`).style.background = "url('template/generic_checkbox_unchecked.png') no-repeat";}}
+ document.getElementById("lang").innerHTML = jsonData.lang;
+ if (jsonData.lang == "中文") langchtocn();
+ else langchtoen();
+
+  updatepop();
+  updatetrig('basics', 'input');
+  updatetrig('description', 'input');
+  updatetrig('description', 'textarea');
+  updateprog(document.getElementById("focusproginput"));
+  document.getElementById("descflag").src=document.getElementById("flagpic").src;
+}
+
+
+
 function parsepos(json){
   for (const e in json.pos){document.getElementById(e.replace("pos","")).left = jsonData.pos.e[0];}
 }
@@ -209,6 +377,7 @@ function enumfiles(list){
                   document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
                   autocompleteList.innerHTML = '';
                   document.getElementById("descflag").src=document.getElementById("flagpic").src;});
+              item.style.borderBottom = '1px solid #333333';
               autocompleteList.appendChild(item);});})
       .catch(error => console.error('Error fetching files:', error));});
 }
@@ -254,10 +423,11 @@ function update(input){
 
 let highestZIndex = 10;
 function dragElement(elmnt) {
+  document.getElementById("sidebarbutton").style.zIndex = highestZIndex+300;
+  document.getElementById("sidebar").style.zIndex = highestZIndex+200;
+  document.getElementById("main").style.zIndex = highestZIndex+100;
   elmnt.style.zIndex = ++highestZIndex;
-  document.getElementById("main").style.zIndex = highestZIndex+10000;
-  document.getElementById("sidebar").style.zIndex = highestZIndex+20000;
-  document.getElementById("sidebarbutton").style.zIndex = highestZIndex+30000;
+  
 }
 
 let remsidebar = "11px";
@@ -288,8 +458,7 @@ function check(c){
 
 let lang="English"
 function langchange(){
-  if (document.getElementById("lang").innerHTML == "English") langchtocn();
-  else langchtoen();
+  document.getElementById("lang").innerHTML == "English" ? langchtocn() : langchtoen();
   document.getElementById("sfxcheck").play();
 }
 function langchtocn(){

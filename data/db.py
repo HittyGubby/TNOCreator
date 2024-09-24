@@ -2,15 +2,15 @@ import sqlite3
 import os
 
 def insert_image(cursor, filename, data):
-    cursor.execute("INSERT INTO images (name, data) VALUES (?, ?)", (filename, data))
+    cursor.execute("INSERT INTO sfx (name, data) VALUES (?, ?)", (filename, data))
 
 def main():
-    db = sqlite3.connect('image.db')
+    db = sqlite3.connect('data.db')
     cursor = db.cursor()
 
     folder_path = '.'
     for filename in os.listdir(folder_path):
-        if filename.endswith('.png'):  # Adjust the file extension as needed
+        if filename.endswith('.wav'):
             with open(os.path.join(folder_path, filename), 'rb') as file:
                 data = file.read()
                 insert_image(cursor, filename, data)
