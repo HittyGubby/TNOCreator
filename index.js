@@ -55,16 +55,8 @@ window.onload = function(){
 
 //user login section
 var username = "";
-
 async function autoLogin() {
-  const response = await fetch('/auto-login', {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      credentials: 'same-origin' // Include cookies in the request
-  });
-
+  const response = await fetch('/auto-login', {method: 'GET',headers: {'Content-Type': 'application/json'},credentials: 'same-origin'});
   const data = await response.json();
   if (data.success) {
       username = data.username;
@@ -72,11 +64,8 @@ async function autoLogin() {
       const d = new Date();
       const u = username==="" ? username : " - "+username;
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
-  } else {
-      console.log('Auto-login failed:', data.message);
-  }
+  } else {console.log('Auto-login failed:', data.message);}
 }
-
 
 async function loginunfold(){
   document.getElementById('username').style.display = 'inline-block';
@@ -107,13 +96,8 @@ async function login(){
     } else if (data.message === 'User not found') {
       if (confirm('User not found. Register?')) {
           const registerResponse = await fetch('/register', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ user, pass })
-          });
-
+              method: 'POST',headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ user, pass })});
           const registerData = await registerResponse.json();
           if (registerData.success) {
               document.cookie = `session=${registerData.cookie}; path=/`;
@@ -130,14 +114,8 @@ async function login(){
               const d = new Date();
               const u = username==="" ? username : " - "+username;
               document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
-          } else {
-              alert('Registration failed!');
-          }
-      }
-  } else {
-      alert('Login failed!');
-  }
-  }
+          } else {alert('Registration failed!');}}} else {alert('Login failed!');}
+}
 
 function logout(){
   document.cookie = "session= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
@@ -159,19 +137,14 @@ function base64Encode(str) {return btoa(unescape(encodeURIComponent(str)));}
 function jsonupload(jsonData,method){
   fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':method,'name':base64Encode(document.getElementById('filenameinput').value)},body:jsonData})}
 
-  function loadPresets(user) {
+function loadPresets(user) {
     const params = new URLSearchParams({username: encodeURIComponent(user)});
     fetch(`/presets?${params.toString()}`, {
         method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'cookie': document.cookie.split('=')[1]
-        }
-    })
+        headers: {'Content-Type': 'application/json','cookie': document.cookie.split('=')[1]}})
     .then(response => response.json())
     .then(presets => {
         presets.sort((a, b) => b.id - a.id);
-
         const dropdown = document.getElementById('presetList');
         dropdown.innerHTML = '';
         presets.forEach(preset => {
@@ -181,29 +154,17 @@ function jsonupload(jsonData,method){
             option.className = 'preset-entry';
             option.addEventListener('click', () => {
                 document.getElementById('filenameinput').value = preset.name;
-                jsonupdate(JSON.parse(preset.data));
-            });
+                jsonupdate(JSON.parse(preset.data));});
             dropdown.appendChild(option);
-
             const del = document.createElement('button');
             del.style = "transition: 0.3s; background: url('template/closebutton_small.png') no-repeat; border: none; width: 26px; height: 26px; float: right;";
             del.addEventListener('click', (event) => {
                 event.stopPropagation();
                 if (confirm("Sure to remove preset?")) {
-                    fetch(`/presetsdel?${params.toString()}`, {
-                        method: 'GET',
-                        headers: {'id': preset.id}
-                    });
-                    dropdown.removeChild(option);
-                }
-            });
-            option.appendChild(del);
-        });
-    });
+                    fetch(`/presetsdel?${params.toString()}`, {method: 'GET',headers: {'id': preset.id}});
+                    dropdown.removeChild(option);}});option.appendChild(del);});});
 }
-
 //user login section end
-
 
 function uploadjson(event){
   const file = event.target.files[0];
@@ -232,8 +193,7 @@ function downloadjson(){
 function savejson(){
   if(username != ""){
   //jsonupload(JSON.stringify(returnjson()),'save');
-  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':'save','name':base64Encode(document.getElementById('filenameinput').value)},body:JSON.stringify(returnjson())}).then(response => {if (response.ok) {alert('Saved!');loadPresets(username)} else {alert('FAILED!!1!')}})
-  }
+  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':'save','name':base64Encode(document.getElementById('filenameinput').value)},body:JSON.stringify(returnjson())}).then(response => {if (response.ok) {alert('Saved!');loadPresets(username)} else {alert('FAILED!!1!')}})}
   else alert('Cloud Saves requires you to log in.')
 }
 
@@ -299,7 +259,6 @@ function jsonupdate(jsonData){
  document.getElementById("lang").innerHTML = jsonData.lang;
  if (jsonData.lang == "中文") langchtocn();
  else langchtoen();
-
   updatepop();
   updatetrig('basics', 'input');
   updatetrig('description', 'input');
@@ -308,11 +267,7 @@ function jsonupdate(jsonData){
   document.getElementById("descflag").src=document.getElementById("flagpic").src;
 }
 
-
-
-function parsepos(json){
-  for (const e in json.pos){document.getElementById(e.replace("pos","")).left = jsonData.pos.e[0];}
-}
+function parsepos(json){for (const e in json.pos){document.getElementById(e.replace("pos","")).left = jsonData.pos.e[0];}}
 
 function fetchdata(parent,tag) {
   const div = document.getElementById(parent);
@@ -353,12 +308,8 @@ function fetchsize(div){
 }
 function fetchifcheck(div){
   const d = document.getElementById(div);
-  if(d.style.background == "url(\"template/generic_checkbox_checked.png\") no-repeat"){
-    return true;
-  }
-  else return false;
+  if(d.style.background == "url(\"template/generic_checkbox_checked.png\") no-repeat"){return true;}else return false;
 }
-
 
 function enumfiles(list){
   document.getElementById(`${list}input`).addEventListener('input', function() {
@@ -384,9 +335,7 @@ function enumfiles(list){
 
 function updateattrib(parent,child,attribs){
   const c = document.getElementById(parent).getElementsByTagName(child);
-  for (let i = 0; i < c.length; i++) {
-    for (let key in attribs) {c[i].setAttribute(key, attribs[key]);}
-  }
+  for (let i = 0; i < c.length; i++) {for (let key in attribs) {c[i].setAttribute(key, attribs[key]);}}
 }
 
 function updatetrig(parent,child){
@@ -413,13 +362,11 @@ function updatepop() {
     rgb(204, 0, 0) 0 ${scaledAngles[10]}deg,rgb(149, 0, 0) 0 ${scaledAngles[11]}deg)`;
 }
 
-
 function update(input){
   document.getElementById(input.id.replace("input","")).innerHTML = input.value;
   document.getElementById("leaderdesc").innerHTML = document.getElementById("leader").innerHTML;
   document.getElementById("countrydesc").innerHTML = document.getElementById("country").innerHTML;
 }
-
 
 let highestZIndex = 10;
 function dragElement(elmnt) {
@@ -427,7 +374,6 @@ function dragElement(elmnt) {
   document.getElementById("sidebar").style.zIndex = highestZIndex+200;
   document.getElementById("main").style.zIndex = highestZIndex+100;
   elmnt.style.zIndex = ++highestZIndex;
-  
 }
 
 let remsidebar = "11px";
