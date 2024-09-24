@@ -1,8 +1,11 @@
-### TNOCreator
+## TNOCreator
 *PLANNED TNO customized showcase generator..? By a total frontend noob(
 
-##### Installation (Im not sure if anyone would really deploy this)
-0.Clone Repo **used git lfs for database files, so you need to install git-lfs and `git-lfs clone *repo*`**
+### Installation
+
+(Im not sure if anyone would really deploy this)
+
+0. Clone Repo **used git lfs for database files, so you need to install git-lfs and `git-lfs clone *repo*`**
 
 1. Install NodeJS
 
@@ -10,20 +13,27 @@
 
 ```
 npm install express
-npm install cors
 npm install sqlite3
 npm install path
+npm install crypto
+npm install cookie-parser
 ```
 
-3. Run server with default port 5500
+3. Run server with default port 5500 `node index.mjs`
 
-`node index.mjs`
+(Run `npm install forever` and `forever index.mjs` to run unattended)
 
+### **Important**
 
-**Important** Html format text is supported in input boxes
+1. Html format text is supported in input boxes
 
+2. Github Pages deployed but only serves static functions so you can only change texts but cannot add asset
 
-Current Dev Progress: **Adding Components**
+### Current Dev Progress: 
+
+1. Custom assets uploading (per user or shared?)
+
+**Project Path**
 
 - [x] Arranging Elements.. Basically Just a static website
 
@@ -35,11 +45,11 @@ Current Dev Progress: **Adding Components**
 
 - [x] Add load preset [from local db or custom config upload&download]
 
-- [ ] Auto remember preset by user cookie (or user account?)
+- [x] Auto remember preset by user cookie (or user account?)
 
- ->maybe auto crawl from tno wiki?
+ ->maybe auto crawl from tno wiki? - (use your browser, clipboard and mouse!!)
 
- ->maybe add more hoi4 mod ui? 
+ ->maybe add more hoi4 mod ui? - (this is tno creator not kr kx md rf or anything else, **but interested if you can send PR**) (yes hittygubby just 2 lazy 2 search for mods on paradoxplaza or nexusmods(since i play pirated hoi4) and extract ui templates and do all tunings, and after all tno alt timelines just seems to be more popular)
 
 - [x] Add button hover gfx (maybe not? we are not refactoring hoi4 anyways lmao)
 
@@ -49,7 +59,7 @@ Current Dev Progress: **Adding Components**
 
 - [ ] Add screenshot and save
 
-- [ ] Add superevent music
+- [x] Add superevent music(forget about it, just play music backgrounds!!1! this was for users to simply record screen but contradicts with screenshot function...(and you can just play random music in backgrounds!! and if you really cannot catch that timimg you can add later as sfx... so pretty lame and why im talking gibberish again now this is not diary ok i shut up))
 
 - [x] Multilingual support (well technically only the "leader of " and "Economy" string is not editable so pretty lame...)
 

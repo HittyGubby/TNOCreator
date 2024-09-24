@@ -10,8 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "express": "^4.19.2",
+    "express-basic-auth": "^1.2.1",
+    "http-auth": "^4.2.0",
     "sqlite3": "^5.1.7"
   }
 }

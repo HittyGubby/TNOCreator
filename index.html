@@ -29,11 +29,12 @@
     #poplist input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%;  float: right;}
     #description input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
     .list {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px; width: 250px; float: right;}
-    .checkbox {color: #cccccc;z-index: 255; border: none; width: 150px; height: 34px; font-family:Aldrich,FZRui;}
-    .autocomp :hover{background-color: #e9e9e9;}
+    .checkbox {color: #cccccc;z-index: 255; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;}
+    .autocomp :hover{background-color: #999999;border-bottom: 1px solid #cccc00;}
     .autocomp {max-height: 200px;overflow-y: auto;overflow-x: hidden;}
     .queryinput {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 70%;  float: right;}
-    
+    .preset-entry button {display: none;}
+    .preset-entry:hover button {display: inline-block;}
     </style>
 
 </head>
@@ -46,8 +47,12 @@
            <img id="flagpic" src="preset/GER.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
         </div>
         <div style="position:absolute; top: 79px; left: 7px; height: 160px; width: 120px; z-index: 0;">
-            <img id="portraitpic" src="preset/Portrait_Germany_Reichstag_Emergency_Council.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
+            <img src="template/Leader_Background.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
         </div>
+        <div style="position:absolute; top: 79px; left: 7px; height: 160px; width: 120px; z-index: 0;">
+            <img id="portraitpic" src="preset/Portrait_GER_Reichstag_Emergency_Council.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
+        </div>
+        
     </div>
 
     <div>
@@ -99,7 +104,7 @@
         <div style="position:absolute; top: 35px; left: 220px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
             <img id="econpic" src="preset/EHP_GER.png" style="position:absolute;">
         </div>
-        <div style="cursor: move; position: absolute; left: 23px; top: -5px;">
+        <div style="position: absolute; left: 23px; top: -5px;">
         <p id="economyen" style="font-family:Bombardier,FZWen; font-size: 20px; color:#cccccc; position: absolute; z-index: 3; inline-size: 80px;">Economy</p>
         <p id="economycn" style="font-family:Bombardier,FZWen; font-size: 20px; color:#cccccc; position: absolute; z-index: 3; inline-size: 80px; top: -2px; display: none;">经济</p>
     </div>
@@ -110,7 +115,7 @@
     <img src="template/news/event_news_bg.png" style="position: relative;">
     <img id="headerpic" src="preset/nazist-Germany.png" style="position:absolute; height: 70px; width:480px;top: 15px; left: 25px;">
     <img id="newspic" src="preset/GER_german_civil_war.png" style="position:absolute; height: 420px; width:162px;top: 140px; left: 25px;">
-    <button id="newsbutton" onclick="document.getElementById('sfxcheck').play();" style="position:absolute; top: 500px; left: 163px;transition: 0.2s; background: url('template/news/event_option_entry.png') no-repeat; border: none; width: 352px; height: 52px; font-family:Type;font-size: 15px;" onmouseover="this.style.opacity = 0.8" onmouseleave="this.style.opacity = 1">The end of the Reich, surely.</button>
+    <button id="newsbutton" onclick="document.getElementById('sfxcheck').play();" style="position:absolute; top: 500px; left: 163px;transition: 0.2s; background: url('template/news/event_option_entry.png') no-repeat; border: none; width: 352px; height: 52px; font-family:Type;font-size: 15px;color: #000000;" onmouseover="this.style.opacity = 0.8" onmouseleave="this.style.opacity = 1">The end of the Reich, surely.</button>
 
     <div style="position:absolute;display: flex; left: 10px; top:120px; justify-content: center; align-items: center; inline-size: 500px;">
         <p id="newstitle" style="position: absolute;color: #000000; text-align: center; font-family: Type; font-size: 20px;">The German Civilwar</p>
@@ -172,7 +177,6 @@ The main contenders for the Führership have all paid little attention to the Em
             <label>Ideology:</label><br><input id="ideologytextinput" placeholder="Ideology Name"><br>
             <label>Elections:</label><br><input id="electioninput" placeholder="Elections:"><br><br>
             <label>Focus:</label><br><input id="focustextinput" placeholder="National Focus">
-            <br><br>     
         </div>
 <input type="file" id="fileInput" style="display: none;">
     <div id="data" style="color: #cccccc;">
@@ -243,19 +247,28 @@ The main contenders for the Führership have all paid little attention to the Em
         </div>
 
         <div id="control" style="color: #cccccc;">
+            <span>Language:</span>
+            <button id="lang" style="color: #cccccc; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="langchange()">English</button><br>
+            <span>Background Color:</span><br>
+            <input id="backgroundinput" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;" oninput="document.body.bgColor = document.getElementById('backgroundinput').value" placeholder="Background Color..." value="#333333"><br>
             <span>Window Control:</span><br>
             <button class="checkbox" id="checkboxdesc" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Desc</button>
             <button class="checkbox" id="checkboxecon" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Econ</button><br>
             <button class="checkbox" id="checkboxnewswindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show News</button>
             <button class="checkbox" id="checkboxsuperwindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Event</button>
             <audio id="sfxcheck" src="sfx/click_checkbox.wav" preload="auto"></audio>
-            <br><br>
-            <span>Switch Language:</span><br>
-            <button id="lang" style="color: #cccccc; transition: 0.3s; background: url('template/button_221x34.png') no-repeat; border: none; width: 221px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="langchange()">English</button><br><br>
-            <span>Preset Loading:</span><br>
-            <button id="downloadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_221x34.png') no-repeat; border: none; width: 221px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1">Download Preset</button><br>
-            <button id="uploadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_221x34.png') no-repeat; border: none; width: 221px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1">Upload Preset</button>
-            
+            <br>
+            <span>Manage Presets:</span><br>
+            <input id="filenameinput" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;" placeholder="Filename to save..."><br>
+            <button id="downloadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="downloadjson()">Download Preset</button>
+            <button id="uploadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; float: right;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1">Upload Preset</button><br>
+            <button id="loginunfoldButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; " onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="loginunfold()">Login</button>
+            <button id="loginButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="login()">Login</button>
+            <button id="logoutButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="logout()">Logout</button>
+            <button id="saveButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;float: right;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="savejson()">Save to server</button><br>
+            <div id="presetList" class="autocomp"></div><br>
+            <input id="username" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;display: none;" placeholder="Username"><br>
+            <input id="password" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;display: none;" placeholder="Password">
         </div>
       </div>
 
