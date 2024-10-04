@@ -254,8 +254,8 @@ The main contenders for the Führership have all paid little attention to the Em
             <span>Background Color:</span>
             <input id="backgroundinput" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 50%; float: right;" oninput="document.body.style.backgroundColor = document.getElementById('backgroundinput').value" placeholder="Background Color..." value="rgb(51, 51, 51)"><br>
             <span id="screenshotprogress" style="color:#cccc00;"></span><br>
-            <button id="screenshot" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshot(document.body,document.body.backgroundColor)">Screenshot</button>
-            <button id="screenshotpiechart" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshot(document.getElementById('piechart'),document.body.backgroundColor)">Piechart Only</button>
+            <button id="screenshot" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshot()">Screenshot</button>
+            <button id="screenshotpiechart" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshotpiechart()">Piechart Only</button>
             <br>
             <span>Screenshot Scale:</span>
             <input id="screenshotscale" value="2" placeholder="Integer" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 50%;float: right;">
