@@ -158,13 +158,12 @@ function loadPresets(user) {
 }
 //user login section end
 
-  function screenshot(ele,bkg) {
-    html2canvas(ele).then((canvas) => {
-      document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
+function screenshot(ele,bkg) {
+    document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
     htmlToImage.toBlob(ele, {
       pixelRatio:Number(document.getElementById('screenshotscale').value),
-      width:canvas.width,
-      height:canvas.height,
+      width:Math.max(wid('main'),wid('econ'),wid('desc'),wid('newswindow'),wid('superwindow')),
+      height:Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')),
       backgroundColor: bkg,
       filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
       //,quality: Number(document.getElementById('screenshotquality').value)
@@ -180,8 +179,11 @@ function loadPresets(user) {
       a.remove();
       document.getElementById('screenshotprogress').innerHTML = 'Done!'
     })
-  });
 }
+
+function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
+function hei(e){h=Number(window.getComputedStyle(document.getElementById(e)).top.replace("px",""))+Number(window.getComputedStyle(document.getElementById(e)).height.replace("px",""));if(isNaN(h)) return 0;else return h;}
+
 
 function uploadjson(event){
   const file = event.target.files[0];
