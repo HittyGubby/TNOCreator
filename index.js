@@ -163,7 +163,7 @@ function screenshot(){
     Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')))
 }
 function screenshotpiechart(){
-  capture(document.getElementById('piechart'),document.body.backgroundColor,100,100)
+  capture(document.getElementById('piechart'),document.body.backgroundColor,60,60)
 }
 
 
