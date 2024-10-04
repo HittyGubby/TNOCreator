@@ -7,9 +7,10 @@ window.onload = function(){
     document.getElementById("descflag").src = document.getElementById("flagpic").src;
    
     //add attribs
-    updateattrib('poplist', 'input', {'type': 'number','oninput': 'updatepop()','placeholder': 'Any Positive Number'});
-    updateattrib('basics', 'input', {'class': 'input','oninput': 'update(this)'});
-    updateattrib('description', 'input', {'class': 'input','oninput': 'update(this)'});
+    updateattrib(document.getElementById('poplist'), 'input', {'type': 'number','oninput': 'updatepop()','placeholder': 'Any Positive Number'});
+    updateattrib(document.getElementById('basics'), 'input', {'class': 'input','oninput': 'update(this)'});
+    updateattrib(document.getElementById('description'), 'input', {'class': 'input','oninput': 'update(this)'});
+    updateattrib(document.body, 'button',{'onmouseover':'this.style.opacity = 0.7','onmouseleave':'this.style.opacity = 1'})
 
     //sync textboxes
     document.querySelectorAll('.input').forEach(input => {input.value = document.getElementById(input.id.replace("input","")).innerHTML;});
@@ -25,16 +26,7 @@ window.onload = function(){
     document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");});
       
     //enumerate assets and append to list
-    enumfiles('flag');
-    enumfiles('portrait');
-    enumfiles('focus');
-    enumfiles('econ');
-    enumfiles('econsub');
-    enumfiles('faction');
-    enumfiles('ideology');
-    enumfiles('super');
-    enumfiles('news');
-    enumfiles('header');
+    enumfiles(['flag','portrait','focus','econ','econsub','faction','ideology','super','news','header']);
     
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
@@ -59,12 +51,14 @@ async function autoLogin() {
   const response = await fetch('/auto-login', {method: 'GET',headers: {'Content-Type': 'application/json'},credentials: 'same-origin'});
   const data = await response.json();
   if (data.success) {
-      username = data.username;
-      loadPresets(data.username);
+      username = data.user;
+      loadPresets(data.user);
       const d = new Date();
       const u = username==="" ? username : " - "+username;
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
-  } else {console.log('Auto-login failed:', data.message);}
+      //if(data.ok)
+        {if(confirm(`Load last saved preset "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}} 
+      else {console.log('Auto-login failed:', data.message);}
 }
 
 async function loginunfold(){
@@ -139,9 +133,7 @@ function jsonupload(jsonData,method){
 
 function loadPresets(user) {
     const params = new URLSearchParams({username: encodeURIComponent(user)});
-    fetch(`/presets?${params.toString()}`, {
-        method: 'GET',
-        headers: {'Content-Type': 'application/json','cookie': document.cookie.split('=')[1]}})
+    fetch(`/presets?${params.toString()}`,{method:'GET',headers:{'Content-Type':'application/json'}})
     .then(response => response.json())
     .then(presets => {
         presets.sort((a, b) => b.id - a.id);
@@ -165,6 +157,31 @@ function loadPresets(user) {
                     dropdown.removeChild(option);}});option.appendChild(del);});});
 }
 //user login section end
+
+  function screenshot(ele,bkg) {
+    html2canvas(ele).then((canvas) => {
+      document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
+    htmlToImage.toBlob(ele, {
+      pixelRatio:Number(document.getElementById('screenshotscale').value),
+      width:canvas.width,
+      height:canvas.height,
+      backgroundColor: bkg,
+      filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
+      //,quality: Number(document.getElementById('screenshotquality').value)
+    }).then(async (blob) => {
+        const compressedFile = await imageCompression(blob,{useWebWorker: true,alwaysKeepResolution:true,
+        onProgress: (prog)=>{document.getElementById('screenshotprogress').innerHTML=`Image ${prog}% Compressed`;}});
+      const a = document.createElement('a');
+      const d = new Date();
+      const u = username === "" ? username : " - " + username;
+      a.download = `${d.toLocaleString("zh-CN")}${u}.png`;
+      a.href = URL.createObjectURL(compressedFile);
+      a.click();
+      a.remove();
+      document.getElementById('screenshotprogress').innerHTML = 'Done!'
+    })
+  });
+}
 
 function uploadjson(event){
   const file = event.target.files[0];
@@ -227,7 +244,7 @@ function returnjson(){
       superwindow: fetchifcheck('checkboxsuperwindow'),
     },
     lang: lang,
-    background: document.body.bgColor
+    background: document.body.style.backgroundColor
   }
   return o;
 }
@@ -249,7 +266,7 @@ function jsonupdate(jsonData){
   document.getElementById("main").style.zIndex = highestZIndex+100;
   document.getElementById("sidebar").style.zIndex = highestZIndex+200;
   document.getElementById("sidebarbutton").style.zIndex = highestZIndex+300;
-  document.body.bgColor = jsonData.background;
+  document.body.style.backgroundColor = jsonData.background;
   document.getElementById('backgroundinput').value = jsonData.background
   for (const e in jsonData.show){
    if (jsonData.show[e]){document.getElementById(e).style.display = "";
@@ -311,7 +328,8 @@ function fetchifcheck(div){
   if(d.style.background == "url(\"template/generic_checkbox_checked.png\") no-repeat"){return true;}else return false;
 }
 
-function enumfiles(list){
+function enumfiles(lists){
+  lists.forEach(list => {
   document.getElementById(`${list}input`).addEventListener('input', function() {
   const query = this.value;
   if (!query) {document.getElementById(`autocomp${list}`).innerHTML = '';return;}
@@ -331,10 +349,10 @@ function enumfiles(list){
               item.style.borderBottom = '1px solid #333333';
               autocompleteList.appendChild(item);});})
       .catch(error => console.error('Error fetching files:', error));});
-}
+})}
 
 function updateattrib(parent,child,attribs){
-  const c = document.getElementById(parent).getElementsByTagName(child);
+  const c = parent.getElementsByTagName(child);
   for (let i = 0; i < c.length; i++) {for (let key in attribs) {c[i].setAttribute(key, attribs[key]);}}
 }
 

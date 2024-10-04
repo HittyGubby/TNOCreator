@@ -9,6 +9,9 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/jquery-ui.js"></script>
     <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <script src="js/html-to-image.min.js"></script>
+    <script src="js/html2canvas.min.js"></script>
+    <script src="js/browser-image-compression.js"></script>
     <link rel="stylesheet" href="js/jquery-ui.css">
     <script src="index.js"></script>
 
@@ -25,20 +28,20 @@
     @font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf);}
     @font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf);}
     @font-face {font-family: FZWen;src: url(fonts/FZWH.TTF);}
-    #basics input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
-    #poplist input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%;  float: right;}
-    #description input{height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
-    .list {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px; width: 250px; float: right;}
+    #basics input{height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
+    #poplist input{height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%;  float: right;}
+    #description input{height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
+    .list {height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px; width: 250px; float: right;}
     .checkbox {color: #cccccc;z-index: 255; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;}
     .autocomp :hover{background-color: #999999;border-bottom: 1px solid #cccc00;}
     .autocomp {max-height: 200px;overflow-y: auto;overflow-x: hidden;}
-    .queryinput {height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 70%;  float: right;}
+    .queryinput {height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 70%;  float: right;}
     .preset-entry button {display: none;}
     .preset-entry:hover button {display: inline-block;}
     </style>
 
 </head>
-<body bgcolor="#333333">
+<body style="background-color:rgb(51, 51, 51)">
 <div id="main" style="user-select: none; position:absolute;z-index: 8;">
     <div>
         <img src="template/diplo_leader_frame.png" style="position: relative;z-index: 1;">
@@ -73,10 +76,9 @@
         <div style="position:absolute; top: 202px; left: 178px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
             <img id="focuspic" src="preset/goal_unknown.png" style="position:absolute;scale: 0.9;">
         </div>
-        <div style="position:absolute; top: 74px; left: 128px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
+        <div id="piechartparent" style="position:absolute; top: 74px; left: 128px; z-index: 3;display: flex; justify-content: center; align-items: center;" >
             <img src="template/bck_shadow.png" style="position:absolute;scale: 0.6;z-index: 0;">
-            <div id="piechart" style="width: 100px;height: 100px; border-radius: 50%;background:none; scale: 0.6;
-             z-index: 4;"></div>
+            <div id="piechart" style="width: 100px;height: 100px; border-radius: 50%;background:none; scale: 0.6;z-index: 4;"></div>
             <img src="template/pol_piechart_overlay_63x63.png" style="position:absolute;scale: 0.45;z-index: 5;">
         </div>
         <div style="z-index: 3;position: absolute; left: 220px; top: 5px; inline-size: 1000px; color: #cccccc;font-family:Bombardier,FZWen; font-size: 20px; vertical-align:middle;">
@@ -180,7 +182,7 @@ The main contenders for the Führership have all paid little attention to the Em
         </div>
 <input type="file" id="fileInput" style="display: none;">
     <div id="data" style="color: #cccccc;">
-        <label style="color: #cccc00;">Focus Progress:</label><input type="number" id="focusproginput" placeholder="Focus progress:" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%; float: right;" oninput="updateprog(this)">
+        <label style="color: #cccc00;">Focus Progress:</label><input type="number" id="focusproginput" placeholder="Focus progress:" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%; float: right;" oninput="updateprog(this)">
         <div id="poplist" style="line-height: 30px;">
             <label style="color: #cccc00;">Chart Angle:</label><input type="number"><br>
             <label>Nihilism:</label><input><br>
@@ -248,33 +250,45 @@ The main contenders for the Führership have all paid little attention to the Em
 
         <div id="control" style="color: #cccccc;">
             <span>Language:</span>
-            <button id="lang" style="color: #cccccc; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="langchange()">English</button><br>
-            <span>Background Color:</span><br>
-            <input id="backgroundinput" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;" oninput="document.body.bgColor = document.getElementById('backgroundinput').value" placeholder="Background Color..." value="#333333"><br>
-            <span>Window Control:</span><br>
-            <button class="checkbox" id="checkboxdesc" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Desc</button>
-            <button class="checkbox" id="checkboxecon" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Econ</button><br>
-            <button class="checkbox" id="checkboxnewswindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show News</button>
-            <button class="checkbox" id="checkboxsuperwindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="check(this)">Show Event</button>
-            <audio id="sfxcheck" src="sfx/click_checkbox.wav" preload="auto"></audio>
+            <button id="lang" style="color: #cccccc; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;"  onclick="langchange()">English</button><br>
+            <span>Background Color:</span>
+            <input id="backgroundinput" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 50%; float: right;" oninput="document.body.style.backgroundColor = document.getElementById('backgroundinput').value" placeholder="Background Color..." value="rgb(51, 51, 51)"><br>
+            <span id="screenshotprogress" style="color:#cccc00;"></span><br>
+            <button id="screenshot" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshot(document.body,document.body.backgroundColor)">Screenshot</button>
+            <button id="screenshotpiechart" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="screenshot(document.getElementById('piechart'),document.body.backgroundColor)">Piechart Only</button>
+            
             <br>
+            <span>Screenshot Scale:</span>
+            <input id="screenshotscale" value="2" placeholder="Integer" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 50%;float: right;">
+            <br>
+            <!--
+            <span>Screenshot Quality:</span>
+            <input id="screenshotquality" value="0.6" placeholder="0~1" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 50%;float: right;">
+            <br>-->
+            <br>
+            <button class="checkbox" id="checkboxdesc" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;"  onclick="check(this)">Show Desc</button>
+            <button class="checkbox" id="checkboxecon" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;"  onclick="check(this)">Show Econ</button><br>
+            <button class="checkbox" id="checkboxnewswindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;"  onclick="check(this)">Show News</button>
+            <button class="checkbox" id="checkboxsuperwindow" style="background:url('template/generic_checkbox_checked.png') no-repeat;font-family: Aldrich,FZRui;"  onclick="check(this)">Show Event</button>
+            <audio id="sfxcheck" src="sfx/click_checkbox.wav" preload="auto"></audio>
+            <br><br>
             <span>Manage Presets:</span><br>
-            <input id="filenameinput" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;" placeholder="Filename to save..."><br>
-            <button id="downloadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="downloadjson()">Download Preset</button>
-            <button id="uploadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; float: right;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1">Upload Preset</button><br>
-            <button id="loginunfoldButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; " onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="loginunfold()">Login</button>
-            <button id="loginButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="login()">Login</button>
-            <button id="logoutButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="logout()">Logout</button>
-            <button id="saveButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;float: right;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="savejson()">Save to server</button><br>
-            <div id="presetList" class="autocomp"></div><br>
-            <input id="username" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;display: none;" placeholder="Username"><br>
-            <input id="password" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;display: none;" placeholder="Password">
+            <input id="filenameinput" style="height: 18px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;" placeholder="Filename to save..."><br>
+            <button id="downloadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;"  onclick="downloadjson()">Download Preset</button>
+            <button id="uploadJson" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; float: right;" >Upload Preset</button><br>
+            <button id="loginunfoldButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui; "  onclick="loginunfold()">Login</button>
+            <button id="loginButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;"  onclick="login()">Login</button>
+            <button id="logoutButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;display: none;"  onclick="logout()">Logout</button>
+            <button id="saveButton" style="color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none; width: 170px; height: 34px; font-family:Aldrich,FZRui;float: right;"  onclick="savejson()">Save to server</button><br>
+            <div id="presetList" class="autocomp"></div>
+            <input id="username" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 48%; display: none;" placeholder="Username">
+            <input id="password" style="height: 20px; font-family: Aldrich,FZRui; background-color: #cccccc20; outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 43%;position: absolute; display: none;" placeholder="Password">
         </div>
       </div>
 
     <audio id="sfxclosewindow" src="sfx/click_window_close.wav" preload="auto"></audio>
     <audio id="sfxopenwindow" src="sfx/click_window_open.wav" preload="auto"></audio>
-    <button id="sidebarbutton" style="color: #cccccc;position: fixed;bottom: 10px;right: 10px;z-index: 12; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;" onmouseover="this.style.opacity = 0.7" onmouseleave="this.style.opacity = 1" onclick="sidebartoggle()">Hide Editor</button>
+    <button id="sidebarbutton" style="color: #cccccc;position: fixed;bottom: 10px;right: 10px;z-index: 12; transition: 0.3s; background: url('template/button_123x34.png') no-repeat; border: none; width: 123px; height: 34px; font-family:Aldrich,FZRui;"  onclick="sidebartoggle()">Hide Editor</button>
 </div>
 </body>
 </html>

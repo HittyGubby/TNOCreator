@@ -57,7 +57,7 @@ npm install cookie-parser
 
 - [x] Use database instead of discrete asset pics
 
-- [ ] Add screenshot and save
+- [x] Add screenshot and save
 
 - [x] Add superevent music(forget about it, just play music backgrounds!!1! this was for users to simply record screen but contradicts with screenshot function...(and you can just play random music in backgrounds!! and if you really cannot catch that timimg you can add later as sfx... so pretty lame and why im talking gibberish again now this is not diary ok i shut up))
 
@@ -74,3 +74,13 @@ I really HATE separating HTML with CSS, just bringing out so much inconvenience 
 ... so if any of you guys want to refactor due to this, fork and dont send PR...
 
 (technically i can just spam it to random free chatbot... but simply wait for main part to complete first..?)
+
+### Credits:
+
+`jQuery` for UI and window composition
+
+`html2canvas` for fetching screenshot size 
+
+`html-to-image` for converting webpage into screenshot
+
+`browser-image-compression` for compressing screenshot(63% compression ratio on average)
