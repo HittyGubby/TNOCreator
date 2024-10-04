@@ -157,13 +157,22 @@ function loadPresets(user) {
                     dropdown.removeChild(option);}});option.appendChild(del);});});
 }
 //user login section end
+function screenshot(){
+  capture(document.body,document.body.backgroundColor,
+    Math.max(wid('main'),wid('econ'),wid('desc'),wid('newswindow'),wid('superwindow')),
+    Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')))
+}
+function screenshotpiechart(){
+  capture(document.getElementById('piechart'),document.body.backgroundColor,100,100)
+}
 
-function screenshot(ele,bkg) {
+
+function capture(ele,bkg,width,height) {
     document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
     htmlToImage.toBlob(ele, {
       pixelRatio:Number(document.getElementById('screenshotscale').value),
-      width:Math.max(wid('main'),wid('econ'),wid('desc'),wid('newswindow'),wid('superwindow')),
-      height:Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')),
+      width:width,
+      height:height,
       backgroundColor: bkg,
       filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
       //,quality: Number(document.getElementById('screenshotquality').value)
