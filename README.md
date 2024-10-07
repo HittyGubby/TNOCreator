@@ -1,5 +1,5 @@
 ## TNOCreator
-*PLANNED TNO customized showcase generator..? By a total frontend noob(
+TNO customizable showcase generator by a web noob
 
 ### Installation
 
@@ -17,6 +17,7 @@ npm install sqlite3
 npm install path
 npm install crypto
 npm install cookie-parser
+npm install multer
 ```
 
 3. Run server with default port 5500 `node index.mjs`
@@ -25,13 +26,13 @@ npm install cookie-parser
 
 ### **Important**
 
+0. Technically this project has been completed, but maybe debloating in future using random chatbot...
+
 1. Html format text is supported in input boxes
 
 2. Github Pages deployed but only serves static functions so you can only change texts but cannot add asset
 
-### Current Dev Progress: 
-
-1. Custom assets uploading (per user or shared?)
+3. User account deletion is unsupported
 
 **Project Path**
 
@@ -68,12 +69,6 @@ npm install cookie-parser
 - [x] Auto set top priority on window click
 
 - [x] Translatable and componentized panel widgets for customization
-
-I really HATE separating HTML with CSS, just bringing out so much inconvenience (especially for simple sites like this one)
-
-... so if any of you guys want to refactor due to this, fork and dont send PR...
-
-(technically i can just spam it to random free chatbot... but simply wait for main part to complete first..?)
 
 ### Credits:
 

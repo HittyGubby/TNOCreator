@@ -4,6 +4,8 @@ import sqlite3 from 'sqlite3';
 import path from 'path';
 import crypto from 'crypto'
 import cookieParser from 'cookie-parser'
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 const app = express();
 const port = 5500;
 app.use(express.json());
@@ -12,6 +14,7 @@ app.use(cookieParser());
 const userdb = new sqlite3.Database('users.db');
 userdb.run(`CREATE TABLE IF NOT EXISTS preset (id INTEGER,name TEXT,method TEXT,time TEXT,ip TEXT,user TEXT,ua TEXT,data TEXT,PRIMARY KEY("id"));`);
 userdb.run(`CREATE TABLE IF NOT EXISTS auth (id INTEGER,user TEXT UNIQUE,pass TEXT,cookie TEXT,PRIMARY KEY("id"));`);
+userdb.run(`CREATE TABLE IF NOT EXISTS upload (id INTEGER,type TEXT,filename TEXT,user TEXT,time TEXT,ip TEXT,ua TEXT,data BLOB,PRIMARY KEY("id"));`)
 
 app.post('/login', (req, res) => {
     const db = new sqlite3.Database(`data/user.db`);
@@ -34,20 +37,33 @@ app.post('/register', (req, res) => {
             return res.status(500).json({ success: false, message: 'Database error' });}
         res.json({ success: true, cookie });});}});
 
-app.get('/auto-login', (req, res) => {
-    const cookie = req.cookies.session;
-    const db = new sqlite3.Database(`data/user.db`);        
-    db.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-        if (err) {return res.status(500).json({ success: false, message: 'Database error' });}
-        if (!row) {return res.json({ success: false, message: 'Invalid session' });}
-        const username = row.user;
-        db.get(`SELECT user, data, name FROM preset WHERE user = ? AND method = 'save' ORDER BY id DESC LIMIT 1`, [username], (err, presetRow) => {
-            if (err) {return res.status(500).json({ success: false, message: 'Database error' });}
-            if (!presetRow) {return res.status(404).json({ success: false, message: 'No saved presets' });}
-                res.json({ success: true, user: presetRow.user, data: presetRow.data, name: presetRow.name });});});});
+        app.get('/auto-login', (req, res) => {
+            const cookie = req.cookies.session;
+            const db = new sqlite3.Database(`data/user.db`);
+          
+            db.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+              if (err) {
+                return res.status(500).json({ success: false, message: 'Database error' });
+              }
+              if (!row) {
+                return res.json({ success: false, message: 'Invalid session' });
+              }
+              const username = row.user;
+              db.get(`SELECT user, data, name FROM preset WHERE user = ? AND method = 'save' ORDER BY id DESC LIMIT 1`, [username], (err, presetRow) => {
+                if (err) {
+                  return res.status(500).json({ success: false, message: 'Database error' });
+                }
+                if (!presetRow) {
+                  return res.json({ success: true, user: username, message: 'No saved presets' });
+                }
+                res.json({ success: true, user: presetRow.user, data: presetRow.data, name: presetRow.name });
+              });
+            });
+          });
+          
         
 
-function base64Decode(str) {return decodeURIComponent(escape(Buffer.from(str, 'base64').toString('binary')));}
+function base64Decode(str) {return str=='' ? '':decodeURIComponent(escape(Buffer.from(str, 'base64').toString('binary')))}
 
 app.get('/presets', (req, res) => {
     const db = new sqlite3.Database(`data/user.db`);
@@ -77,10 +93,6 @@ app.get('/presetsdel', (req, res) => {
             db.run("UPDATE preset SET method = 'deleted' WHERE id = ? AND user = ?", [req.headers['id'], user], (err) => {
                 if (err) {return res.status(500).send('Error deleting preset');}res.send('ok');});});});
 
-//this line must be on top of express.static or otherwise maybe compromising databases
-app.get('/data/:name',(req,res) => { const name = req.params.name; res.status(403).send(`${name} : File Access Restricted`);});
-//app.use(cors());  //uncomment to allow cross origin reqs (separating api and frontend)
-
 app.get(`/sfx/:name`, (req, res) => {
     const db = new sqlite3.Database(`data/data.db`);
     const name = req.params.name;
@@ -105,6 +117,140 @@ function setupDatabaseRoutes(dbs) {
                 else {res.status(404).send('Image not found');}});});});
 }
 
-app.use(express.static(path.resolve()));
+function setupDatabaseRoutesUser(dbs) {
+    const udb = new sqlite3.Database(`data/user.db`);
+    const db = new sqlite3.Database(`data/upload.db`);
+  
+    dbs.forEach(dbname => {
+        app.get(`/api/user/${dbname}`, (req, res) => {
+            const cookie = req.cookies.session;
+            const query = req.query.q || '';
+          
+            if (cookie === undefined) {
+              db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND shared = 'true'`, [`%${query}%`], (err, rows) => {
+                if (err) {
+                  return res.status(500).send('Error retrieving images');
+                }
+                res.json(rows);
+              });
+            } else {
+              udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+                if (err) {
+                  return res.status(500).send('Error retrieving user');
+                }
+                if (!row) {
+                  return res.status(401).send('Unauthorized');
+                }
+          
+                const user = row.user;
+                db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND ((user = ? AND shared='false') OR shared = 'true')`, [`%${query}%`, user], (err, rows) => {
+                  if (err) {
+                    return res.status(500).send('Error retrieving images');
+                  }
+                  res.json(rows);
+                });
+              });
+            }
+          });
+          
+  
+          app.get(`/api/user/${dbname}/:name`, (req, res) => {
+            const cookie = req.cookies.session;
+            const name = req.params.name;
+          
+            if (cookie === undefined) {
 
+              db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND shared = 'true'`, [name], (err, row) => {
+                if (err) {
+                  return res.status(500).send('Error retrieving image');
+                }
+                if (row) {
+                  res.setHeader('Content-Type', 'image/png');
+                  res.send(row.data);
+                } else {
+                  res.status(404).send('Image not found');
+                }
+              });
+            } else {
+
+              udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+                if (err) {
+                  return res.status(500).send('Error retrieving user');
+                }
+                if (!row) {
+                  return res.status(401).send('Unauthorized');
+                }
+          
+                const user = row.user;
+                db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND ((user = ? AND shared='false') OR shared = 'true')`, [name, user], (err, row) => {
+                  if (err) {
+                    return res.status(500).send('Error retrieving image');
+                  }
+                  if (row) {
+                    res.setHeader('Content-Type', 'image/png');
+                    res.send(row.data);
+                  } else {
+                    res.status(404).send('Image not found');
+                  }
+                });
+              });
+            }
+          });
+          
+    });
+  }
+setupDatabaseRoutesUser(['flag', 'portrait', 'focus', 'econ', 'econsub', 'faction', 'ideology', 'header', 'super', 'news']);
+
+
+app.post('/upload', upload.array('files'), (req, res) => {
+    const udb = new sqlite3.Database(`data/user.db`);
+    const db = new sqlite3.Database(`data/upload.db`);
+    const d = new Date();
+    const files = req.files;
+    const cookie = req.cookies.session;
+    udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+      if (err) {return res.status(500).send('Error retrieving user');}
+      if (!row) {return res.status(401).send('Unauthorized');}
+      if (row.user !== base64Decode(req.body.username)) {return res.status(401).send('Unauthorized');}
+      else {const insertFile = (file, callback) => {
+          db.run(`INSERT INTO ${req.headers['type']} (filename, time, ip, user, ua, data, shared) VALUES (?, ?, ?, ?, ?, ? ,?)`,
+            [file.originalname,d.toLocaleString("zh-CN"),req.ip,
+            base64Decode(req.body.username),req.headers['user-agent'],file.buffer,req.headers['shared']], callback);};
+        let completed = 0;
+        const errors = [];
+        files.forEach(file => {
+          insertFile(file, (err) => {if (err) {errors.push(err.message);}completed++;
+            if (completed === files.length) {
+              if (errors.length > 0) {res.status(500).json({ error: errors });} 
+              else {res.status(200).json({ message: 'Files uploaded successfully' });}}});});}});});
+
+
+app.post('/assetdel', (req, res) => {
+  const db = new sqlite3.Database(`data/upload.db`);
+  const udb = new sqlite3.Database(`data/user.db`);
+  const cookie = req.cookies.session;
+  const { filename, type } = req.body;
+
+  udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+    if (err) {
+      return res.status(500).send('Error retrieving user'+err);
+    }
+    if (!row) {
+      return res.status(401).send('Unauthorized');
+    }
+
+    const user = row.user;
+    db.run(`UPDATE ${type} SET shared = 'deleted' WHERE filename = ? AND user = ?`, [filename, user], (err) => {
+      if (err) {
+        return res.status(500).send('Error deleting asset'+err);
+      }
+      res.json({ success: true, message: 'Asset deleted successfully' });
+    });
+  });
+});
+                
+//this line must be on top of express.static or otherwise maybe compromising databases
+app.get('/data/:name',(req,res) => { const name = req.params.name; res.status(403).send(`${name} : File Access Restricted`);});
+//app.use(cors());  //uncomment to allow cross origin reqs (separating api and frontend)
+app.use(express.static(path.resolve()));
 app.listen(port, () => {console.log(`Server running at http://localhost:${port}`);});

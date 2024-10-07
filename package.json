@@ -17,6 +17,7 @@
     "express-basic-auth": "^1.2.1",
     "html2canvas": "^1.4.1",
     "http-auth": "^4.2.0",
+    "multer": "^1.4.5-lts.1",
     "sqlite3": "^5.1.7"
   }
 }

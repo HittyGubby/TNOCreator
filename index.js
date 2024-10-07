@@ -1,4 +1,6 @@
 window.onload = function(){
+
+    genpiccontainer()
   
     //sync texts    
     document.getElementById("progressbar").style.width=Math.round(Math.random()*237)+"px";
@@ -7,7 +9,7 @@ window.onload = function(){
     document.getElementById("descflag").src = document.getElementById("flagpic").src;
    
     //add attribs
-    updateattrib(document.getElementById('poplist'), 'input', {'type': 'number','oninput': 'updatepop()','placeholder': 'Any Positive Number'});
+    updateattrib(document.getElementById('poplist'), 'input', {'min':'0','type': 'number','oninput': 'updatepop()','placeholder': 'Any Positive Number'});
     updateattrib(document.getElementById('basics'), 'input', {'class': 'input','oninput': 'update(this)'});
     updateattrib(document.getElementById('description'), 'input', {'class': 'input','oninput': 'update(this)'});
     updateattrib(document.body, 'button',{'onmouseover':'this.style.opacity = 0.7','onmouseleave':'this.style.opacity = 1'})
@@ -24,9 +26,9 @@ window.onload = function(){
 
     //init pic data
     document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");});
-      
-    //enumerate assets and append to list
-    enumfiles(['flag','portrait','focus','econ','econsub','faction','ideology','super','news','header']);
+    
+    //disable user upload on init
+    
     
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
@@ -52,12 +54,16 @@ async function autoLogin() {
   const data = await response.json();
   if (data.success) {
       username = data.user;
+      document.querySelectorAll('.uploadbutton').forEach(b => {
+        b.onclick=function(){uploadasset(this)};})
       loadPresets(data.user);
       const d = new Date();
       const u = username==="" ? username : " - "+username;
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
       //if(data.ok)
-        {if(confirm(`Load last saved preset "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}} 
+      if(data.message!='No saved presets')
+        {if(confirm(`Load last saved preset "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}
+    } 
       else {console.log('Auto-login failed:', data.message);}
 }
 
@@ -84,10 +90,13 @@ async function login(){
       document.getElementById('loginunfoldButton').style.display = 'none';
       document.getElementById('loginButton').style.display = 'none';
       document.getElementById('logoutButton').style.display = 'inline-block';
+      document.querySelectorAll('.uploadbutton').forEach(b => {
+        b.onclick=function(){uploadasset(this)};})
       const d = new Date();
       const u = username==="" ? username : " - "+username;
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
     } else if (data.message === 'User not found') {
+      if(user!=''){
       if (confirm('User not found. Register?')) {
           const registerResponse = await fetch('/register', {
               method: 'POST',headers: {'Content-Type': 'application/json'},
@@ -108,7 +117,7 @@ async function login(){
               const d = new Date();
               const u = username==="" ? username : " - "+username;
               document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
-          } else {alert('Registration failed!');}}} else {alert('Login failed!');}
+          } else {alert('Registration failed!');}}}} else {alert('Login failed!');}
 }
 
 function logout(){
@@ -125,6 +134,8 @@ document.getElementById('password').style.display = 'none';
 const d = new Date();
 const u = username==="" ? username : " - "+username;
 document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+document.querySelectorAll('.uploadbutton').forEach(b => {
+  b.onclick=function(){alert('Login to upload!')};})
 }
 
 function base64Encode(str) {return btoa(unescape(encodeURIComponent(str)));}
@@ -160,12 +171,9 @@ function loadPresets(user) {
 function screenshot(){
   capture(document.body,document.body.backgroundColor,
     Math.max(wid('main'),wid('econ'),wid('desc'),wid('newswindow'),wid('superwindow')),
-    Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')))
-}
+    Math.max(hei('main'),hei('econ'),hei('desc'),hei('newswindow'),hei('superwindow')))}
 function screenshotpiechart(){
-  capture(document.getElementById('piechart'),document.body.backgroundColor,60,60)
-}
-
+  capture(document.getElementById('piechart'),'#00000000',100,100)}
 
 function capture(ele,bkg,width,height) {
     document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
@@ -190,8 +198,10 @@ function capture(ele,bkg,width,height) {
     })
 }
 
-function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
-function hei(e){h=Number(window.getComputedStyle(document.getElementById(e)).top.replace("px",""))+Number(window.getComputedStyle(document.getElementById(e)).height.replace("px",""));if(isNaN(h)) return 0;else return h;}
+function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
+  Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
+function hei(e){h=Number(window.getComputedStyle(document.getElementById(e)).top.replace("px",""))+
+  Number(window.getComputedStyle(document.getElementById(e)).height.replace("px",""));if(isNaN(h)) return 0;else return h;}
 
 
 function uploadjson(event){
@@ -230,7 +240,9 @@ function returnjson(){
     basics: fetchdata('basics','input'),
     data: fetcharr(),
     focusprog: document.getElementById("focusproginput").value,
-    picture: fetchpic('pictures','input'),
+    picture: fetchpic('pictures','queryinput',true),
+    pictureuser: fetchpic('pictures','queryuserinput',false),
+    picturepath: fetchpicpath(),
     desc: fetchdata('description','input'),
     desclong: fetchdata('description','textarea'),
     pos: {
@@ -263,9 +275,10 @@ function returnjson(){
 function jsonupdate(jsonData){
   for (const e in jsonData.basics){document.getElementById(e).value = jsonData.basics[e];}
   document.getElementById("focusproginput").value=jsonData.focusprog;
-  for (const e in jsonData.picture){document.getElementById(e).value = jsonData.picture[e].replace(/_/g," ").replace(".png","");}
-  for (const e in jsonData.picture)
-   {document.getElementById(e.replace("input","pic")).src = `api/${e.replace("input","")}/${jsonData.picture[e]}`;}
+  for (const e in jsonData.picture){document.getElementById(e).value = jsonData.picture[e];}
+  for (const e in jsonData.pictureuser){document.getElementById(e).value = jsonData.pictureuser[e];}
+  for (const e in jsonData.picturepath)
+   {document.getElementById(e).src = jsonData.picturepath[e]}
   for (const e in jsonData.desc){document.getElementById(e).value = jsonData.desc[e];}
   for (const e in jsonData.desclong){document.getElementById(e).value = jsonData.desclong[e];}
   for (let i=0; i<13; i++){document.getElementById("poplist").children[3*i+1].value=jsonData.data[i];}
@@ -291,7 +304,7 @@ function jsonupdate(jsonData){
   updatetrig('basics', 'input');
   updatetrig('description', 'input');
   updatetrig('description', 'textarea');
-  updateprog(document.getElementById("focusproginput"));
+  document.getElementById('progressbar').style.width=`${jsonData.focusprog * 237 / 100}px`
   document.getElementById("descflag").src=document.getElementById("flagpic").src;
 }
 
@@ -310,12 +323,21 @@ function fetcharr(){
   for (let i=0; i<13; i++) {values[i]=c[3*i+1].value;}
   return values;
 }
-function fetchpic(parent,tag) {
+function fetchpic(parent,tag,deform) {
   const div = document.getElementById(parent);
-  const inputs = div.getElementsByTagName(tag);
+  const inputs = div.getElementsByClassName(tag);
   const inputValues = {};
-  for (let input of inputs) {inputValues[input.id] = `${input.value.replace(/ /g,"_")}.png`;}
+  if(deform){
+  for (let input of inputs) {inputValues[input.id] = `${input.value.replace(/ /g,"_")}.png`;}}
+  else for (let input of inputs) {inputValues[input.id] = input.value;}
   return inputValues;
+}
+function fetchpicpath(){
+  const col = document.getElementsByClassName('pic');
+  const values={};
+  for(let sub of col){
+    values[sub.id] = sub.src.replace(document.location.href,'')}
+    return values;
 }
 function fetchpos(div){
   const divpos = {};
@@ -338,29 +360,6 @@ function fetchifcheck(div){
   const d = document.getElementById(div);
   if(d.style.background == "url(\"template/generic_checkbox_checked.png\") no-repeat"){return true;}else return false;
 }
-
-function enumfiles(lists){
-  lists.forEach(list => {
-  document.getElementById(`${list}input`).addEventListener('input', function() {
-  const query = this.value;
-  if (!query) {document.getElementById(`autocomp${list}`).innerHTML = '';return;}
-  fetch(`/api/${list}?q=${query}`)
-      .then(response => response.json())
-      .then(files => {
-          const autocompleteList = document.getElementById(`autocomp${list}`);
-          autocompleteList.innerHTML = '';
-          files.forEach(file => {
-              const item = document.createElement('div');
-              item.textContent = file.name.replace(/_/g," ").replace(".png","");
-              item.addEventListener('click', () => {
-                  document.getElementById(`${list}input`).value = file.name.replace(/_/g," ").replace(".png","");
-                  document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
-                  autocompleteList.innerHTML = '';
-                  document.getElementById("descflag").src=document.getElementById("flagpic").src;});
-              item.style.borderBottom = '1px solid #333333';
-              autocompleteList.appendChild(item);});})
-      .catch(error => console.error('Error fetching files:', error));});
-})}
 
 function updateattrib(parent,child,attribs){
   const c = parent.getElementsByTagName(child);
@@ -451,10 +450,158 @@ function langchtoen(){
     document.getElementById("economycn").style.display = "none";
     lang="English";}
 
-function updateprog(p){
-  if (Number(p.value) >=0){
-    if (Number(p.value) <=100){
-      document.getElementById("progressbar").style.width=p.value*237/100+"px";}
-    else document.getElementById("progressbar").style.width="237px"}
-  else document.getElementById("progressbar").style.width="0px"
+var shared=true;
+function checkshare(){
+  c=document.getElementById('checkboxshared')
+    if (shared){
+      c.style.background = "url('template/generic_checkbox_unchecked.png') no-repeat";
+      shared=false;
+      document.getElementById("sfxcheck").play();}
+    else{
+      c.style.background = "url(\"template/generic_checkbox_checked.png\") no-repeat";
+      shared=true;
+      document.getElementById("sfxcheck").play();} 
+}
+
+function genpiccontainer(){
+  const elements = ['flag', 'portrait', 'ideology', 'faction', 'focus', 'econ', 'econsub', 'super', 'news', 'header'];
+  elements.forEach(id => {
+    const div = document.createElement('div');
+    div.id = id;
+
+    const span = document.createElement('span');
+    span.textContent = id.charAt(0).toUpperCase() + id.slice(1) + ':';
+    div.appendChild(span);
+
+    const input = document.createElement('input');
+    input.className = 'queryinput';
+    input.id = `${id}input`;
+    input.placeholder = `Search for ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
+    input.style.fontFamily = 'Aldrich, FZRui';
+    input.addEventListener('input', function() {
+      const list=this.id.replace('input','');
+      const query = this.value;
+      if (!query) {document.getElementById(`autocomp${list}`).innerHTML = '';return;}
+      fetch(`/api/${list}?q=${query}`)
+          .then(response => response.json())
+          .then(files => {
+              const autocompleteList = document.getElementById(`autocomp${list}`);
+              autocompleteList.innerHTML = '';
+              files.forEach(file => {
+                  const item = document.createElement('div');
+                  item.textContent = file.name.replace(/_/g," ").replace(".png","");
+                  item.addEventListener('click', () => {
+                      document.getElementById(`${list}input`).value = file.name.replace(/_/g," ").replace(".png","");
+                      document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
+                      autocompleteList.innerHTML = '';
+                      document.getElementById("descflag").src=document.getElementById("flagpic").src;});
+                  item.style.borderBottom = '1px solid #333333';
+                  autocompleteList.appendChild(item);});})
+          .catch(error => console.error('Error fetching files:', error));});
+    div.appendChild(input);
+
+    const autocomp = document.createElement('div');
+    autocomp.className = 'autocomp';
+    autocomp.id = `autocomp${id}`;
+    autocomp.style.maxWidth = '100%';
+    div.appendChild(autocomp);
+
+    const upload = document.createElement('button');
+    //upload.onclick=function() { uploadasset(this); };
+    upload.className = 'uploadbutton'
+    upload.id = `upload${id}`;
+    upload.innerHTML=`Upload`;
+    upload.onclick=function(){alert('Login to upload!')}
+    div.appendChild(upload);
+
+    const userinput = document.createElement('input');
+    userinput.className = 'queryuserinput';
+    userinput.id = `${id}userinput`;
+    userinput.placeholder = `Search for custom ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
+    userinput.addEventListener('input', function() {
+      const list=this.id.replace('userinput','');
+      const query = this.value;
+      if (!query) {document.getElementById(`autocompuser${list}`).innerHTML = '';return;}
+      fetch(`/api/user/${list}?q=${query}`)
+          .then(response => response.json())
+          .then(files => {
+              const autocompleteList = document.getElementById(`autocompuser${list}`);
+              autocompleteList.innerHTML = '';
+              files.forEach(file => {
+                  const item = document.createElement('div');
+                  item.textContent = file.filename;
+                  item.addEventListener('click', () => {
+                      document.getElementById(`${list}userinput`).value = file.filename;
+                      document.getElementById(`${list}pic`).src = `/api/user/${list}/${file.filename}`;
+                      autocompleteList.innerHTML = '';
+                      document.getElementById("descflag").src=document.getElementById("flagpic").src;});
+                  item.style.borderBottom = '1px solid #333333';
+                  if(file.user==username){
+                  const del = document.createElement('button');
+            del.style = "transition: 0.3s; background: url('template/closebutton_small.png') no-repeat; border: none; width: 26px; height: 26px; float: right;";
+            del.addEventListener('click', (event) => {
+              event.stopPropagation();
+              if (confirm("Sure to remove asset?")) {
+                fetch(`/assetdel`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    filename: file.filename,
+                    type: list
+                  })
+                })
+                .then(response => response.json())
+                .then(result => {
+                  if (result.success) {
+                    autocompleteList.removeChild(item);
+                  } else {
+                    console.error('Error:', result.message);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                });
+              }
+            });
+                    item.appendChild(del);}
+                  autocompleteList.appendChild(item);
+                });})
+          .catch(error => console.error('Error fetching files:', error));});
+    div.appendChild(userinput);
+
+    const uploader=document.createElement('input');
+    uploader.type = 'file';
+    uploader.id = `${id}uploader`;
+    uploader.style.display='none';
+    uploader.multiple=true;
+    div.appendChild(uploader);
+
+    const autocompuser = document.createElement('div');
+    autocompuser.className = 'autocompuser';
+    autocompuser.id = `autocompuser${id}`;
+    autocompuser.style.maxWidth = '100%';
+    div.appendChild(autocompuser);
+
+    document.getElementById('piccontainer').appendChild(div);
+  });
+}
+
+function uploadasset(ele) {
+  const type = ele.id.replace("upload", "");
+  const fileInput = document.getElementById(`${type}uploader`);
+  fileInput.click();
+  fileInput.onchange = function() {
+    const files = fileInput.files;
+    const formData = new FormData();
+    formData.append('username', base64Encode(username));
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);}
+      document.getElementById(`${type}userinput`).value = files[0].name;
+      document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+    fetch(`/upload`, {method: 'POST',headers:{'type':type,'shared':shared},body: formData})
+    .then(response => response.json())
+    .then(result => {console.log(result);})
+    .catch(error => {console.error('Error:', error);});};
 }
