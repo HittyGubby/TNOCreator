@@ -36,32 +36,17 @@ app.post('/register', (req, res) => {
         if (err) {if (err.code === 'SQLITE_CONSTRAINT') {return res.json({ success: false, message: 'Username already exists' });}
             return res.status(500).json({ success: false, message: 'Database error' });}
         res.json({ success: true, cookie });});}});
-
         app.get('/auto-login', (req, res) => {
             const cookie = req.cookies.session;
             const db = new sqlite3.Database(`data/user.db`);
-          
             db.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-              if (err) {
-                return res.status(500).json({ success: false, message: 'Database error' });
-              }
-              if (!row) {
-                return res.json({ success: false, message: 'Invalid session' });
-              }
+              if (err) {return res.status(500).json({ success: false, message: 'Database error' });}
+              if (!row) {return res.json({ success: false, message: 'Invalid session' });}
               const username = row.user;
               db.get(`SELECT user, data, name FROM preset WHERE user = ? AND method = 'save' ORDER BY id DESC LIMIT 1`, [username], (err, presetRow) => {
-                if (err) {
-                  return res.status(500).json({ success: false, message: 'Database error' });
-                }
-                if (!presetRow) {
-                  return res.json({ success: true, user: username, message: 'No saved presets' });
-                }
-                res.json({ success: true, user: presetRow.user, data: presetRow.data, name: presetRow.name });
-              });
-            });
-          });
-          
-        
+                if (err) {return res.status(500).json({ success: false, message: 'Database error' });}
+                if (!presetRow) {return res.json({ success: true, user: username, message: 'No saved presets' });}
+                res.json({ success: true, user: presetRow.user, data: presetRow.data, name: presetRow.name });});});});
 
 function base64Decode(str) {return str=='' ? '':decodeURIComponent(escape(Buffer.from(str, 'base64').toString('binary')))}
 
@@ -120,85 +105,36 @@ function setupDatabaseRoutes(dbs) {
 function setupDatabaseRoutesUser(dbs) {
     const udb = new sqlite3.Database(`data/user.db`);
     const db = new sqlite3.Database(`data/upload.db`);
-  
     dbs.forEach(dbname => {
         app.get(`/api/user/${dbname}`, (req, res) => {
             const cookie = req.cookies.session;
             const query = req.query.q || '';
-          
             if (cookie === undefined) {
               db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND shared = 'true'`, [`%${query}%`], (err, rows) => {
-                if (err) {
-                  return res.status(500).send('Error retrieving images');
-                }
-                res.json(rows);
-              });
-            } else {
-              udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-                if (err) {
-                  return res.status(500).send('Error retrieving user');
-                }
-                if (!row) {
-                  return res.status(401).send('Unauthorized');
-                }
-          
+                if (err) {return res.status(500).send('Error retrieving images');}res.json(rows);});} 
+                else {udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+                if (err) {return res.status(500).send('Error retrieving user');}
+                if (!row) {return res.status(401).send('Unauthorized');}
                 const user = row.user;
                 db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND ((user = ? AND shared='false') OR shared = 'true')`, [`%${query}%`, user], (err, rows) => {
-                  if (err) {
-                    return res.status(500).send('Error retrieving images');
-                  }
-                  res.json(rows);
-                });
-              });
-            }
-          });
-          
-  
+                  if (err) {return res.status(500).send('Error retrieving images');}
+                  res.json(rows);});});}});
           app.get(`/api/user/${dbname}/:name`, (req, res) => {
             const cookie = req.cookies.session;
             const name = req.params.name;
-          
             if (cookie === undefined) {
-
               db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND shared = 'true'`, [name], (err, row) => {
-                if (err) {
-                  return res.status(500).send('Error retrieving image');
-                }
-                if (row) {
-                  res.setHeader('Content-Type', 'image/png');
-                  res.send(row.data);
-                } else {
-                  res.status(404).send('Image not found');
-                }
-              });
-            } else {
-
-              udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-                if (err) {
-                  return res.status(500).send('Error retrieving user');
-                }
-                if (!row) {
-                  return res.status(401).send('Unauthorized');
-                }
-          
+                if (err) {return res.status(500).send('Error retrieving image');}
+                if (row) {res.setHeader('Content-Type', 'image/png');res.send(row.data);} 
+                else {res.status(404).send('Image not found');}});} 
+                else {udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+                if (err) {return res.status(500).send('Error retrieving user');}
+                if (!row) {return res.status(401).send('Unauthorized');}
                 const user = row.user;
                 db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND ((user = ? AND shared='false') OR shared = 'true')`, [name, user], (err, row) => {
-                  if (err) {
-                    return res.status(500).send('Error retrieving image');
-                  }
-                  if (row) {
-                    res.setHeader('Content-Type', 'image/png');
-                    res.send(row.data);
-                  } else {
-                    res.status(404).send('Image not found');
-                  }
-                });
-              });
-            }
-          });
-          
-    });
-  }
+                  if (err) {return res.status(500).send('Error retrieving image');}
+                  if (row) {res.setHeader('Content-Type', 'image/png');res.send(row.data);} 
+                  else {res.status(404).send('Image not found');}});});}});   });}
 setupDatabaseRoutesUser(['flag', 'portrait', 'focus', 'econ', 'econsub', 'faction', 'ideology', 'header', 'super', 'news']);
 
 
@@ -230,24 +166,13 @@ app.post('/assetdel', (req, res) => {
   const udb = new sqlite3.Database(`data/user.db`);
   const cookie = req.cookies.session;
   const { filename, type } = req.body;
-
   udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-    if (err) {
-      return res.status(500).send('Error retrieving user'+err);
-    }
-    if (!row) {
-      return res.status(401).send('Unauthorized');
-    }
-
+    if (err) {return res.status(500).send('Error retrieving user'+err);}
+    if (!row) {return res.status(401).send('Unauthorized');}
     const user = row.user;
     db.run(`UPDATE ${type} SET shared = 'deleted' WHERE filename = ? AND user = ?`, [filename, user], (err) => {
-      if (err) {
-        return res.status(500).send('Error deleting asset'+err);
-      }
-      res.json({ success: true, message: 'Asset deleted successfully' });
-    });
-  });
-});
+      if (err) {return res.status(500).send('Error deleting asset'+err);}
+      res.json({ success: true, message: 'Asset deleted successfully' });});});});
                 
 //this line must be on top of express.static or otherwise maybe compromising databases
 app.get('/data/:name',(req,res) => { const name = req.params.name; res.status(403).send(`${name} : File Access Restricted`);});

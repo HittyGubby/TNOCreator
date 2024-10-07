@@ -27,9 +27,6 @@ window.onload = function(){
     //init pic data
     document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");});
     
-    //disable user upload on init
-    
-    
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
     const d = new Date();
@@ -517,7 +514,7 @@ function genpiccontainer(){
     const userinput = document.createElement('input');
     userinput.className = 'queryuserinput';
     userinput.id = `${id}userinput`;
-    userinput.placeholder = `Search for custom ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
+    //userinput.placeholder = `Search for custom ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
     userinput.addEventListener('input', function() {
       const list=this.id.replace('userinput','');
       const query = this.value;
@@ -545,29 +542,14 @@ function genpiccontainer(){
                 fetch(`/assetdel`, {
                   method: 'POST',
                   headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    filename: file.filename,
-                    type: list
-                  })
-                })
+                    'Content-Type': 'application/json'},
+                  body: JSON.stringify({filename: file.filename,type: list})})
                 .then(response => response.json())
                 .then(result => {
-                  if (result.success) {
-                    autocompleteList.removeChild(item);
-                  } else {
-                    console.error('Error:', result.message);
-                  }
-                })
-                .catch(error => {
-                  console.error('Error:', error);
-                });
-              }
-            });
-                    item.appendChild(del);}
-                  autocompleteList.appendChild(item);
-                });})
+                  if (result.success) {autocompleteList.removeChild(item);} else 
+                  {console.error('Error:', result.message);}})
+                .catch(error => {console.error('Error:', error);});}});
+                    item.appendChild(del);}autocompleteList.appendChild(item);});})
           .catch(error => console.error('Error fetching files:', error));});
     div.appendChild(userinput);
 
@@ -586,6 +568,9 @@ function genpiccontainer(){
 
     document.getElementById('piccontainer').appendChild(div);
   });
+  const col = document.getElementsByClassName('queryuserinput')
+  const ph=['Any','Ratio 3:4','Approax 68x68','Approax 75x75','Approax 100x80','Approax 60x60','Approax 50x50','590x404','162x420','480x70']
+  for(let i=0;i<=9;i++){col[i].placeholder = ph[i]}
 }
 
 function uploadasset(ele) {
