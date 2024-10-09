@@ -161,19 +161,19 @@
         <audio id="sfxsubmenu" src="sfx/click_default.wav" preload="auto"></audio>
 
         <div id="basics" style="color: #cccccc;">
-            <label>国家：</label><br><input id="countryinput" placeholder="Country Name"><br>
-            <label>阵营：</label><br><input id="factiontextinput" placeholder="Faction Name"><br>
-            <label>领导人：</label><br><input id="leaderinput" placeholder="Leader Name"><br><br>
-            <label>党派：</label><br><input id="partyinput" placeholder="Party Name"><br>
-            <label>意识形态：</label><br><input id="ideologytextinput" placeholder="Ideology Name"><br>
-            <label>选举：</label><br><input id="electioninput" placeholder="Elections:"><br><br>
-            <label>国策：</label><br><input id="focustextinput" placeholder="National Focus">
+            <label>国家：</label><br><input id="countryinput" placeholder="国家名称"><br>
+            <label>阵营：</label><br><input id="factiontextinput" placeholder="阵营名称"><br>
+            <label>领导人：</label><br><input id="leaderinput" placeholder="领导人名称"><br><br>
+            <label>党派：</label><br><input id="partyinput" placeholder="党派名称"><br>
+            <label>意识形态：</label><br><input id="ideologytextinput" placeholder="意识形态"><br>
+            <label>选举：</label><br><input id="electioninput" placeholder="选举"><br><br>
+            <label>国策：</label><br><input id="focustextinput" placeholder="国策">
         </div>
 <input type="file" id="fileInput" style="display: none;">
     <div id="data" style="color: #cccccc;">
-        <label style="color: #cccc00;">国策进度：</label><input type="number" id="focusproginput" placeholder="Focus progress:" style="width: 52%; float: right;" oninput="document.getElementById('progressbar').style.width=`${this.value * 237 / 100}px`" min="0" max="100">
+        <label style="color: #cccc00;">国策进度：</label><input type="number" id="focusproginput" placeholder="国策进度" style="width: 52%; float: right;" oninput="document.getElementById('progressbar').style.width=`${this.value * 237 / 100}px`" min="0" max="100">
         <div id="poplist" style="line-height: 30px;">
-            <label style="color: #cccc00;">饼图角度：</label><input type="number"><br>
+            <label style="color: #cccc00;">饼图角度：</label><input type="number" placeholder="任意"><br>
             <label>虚无主义：</label><input><br>
             <label>秘传纳粹主义：</label><input><br>
             <label>极端民族主义：</label><input><br>
@@ -197,15 +197,15 @@
 
         <div id="description" style="color: #cccccc;">
             <label>领导人介绍：</label><br>
-            <textarea id="detaildescinput" class="input" oninput="update(this)" placeholder="Leader Description:"></textarea><br><br>
-            <label>超事件标题：</label><br><input id="supertitleinput" placeholder="Superevent title:"><br>
+            <textarea id="detaildescinput" class="input" oninput="update(this)" placeholder="领导人介绍"></textarea><br><br>
+            <label>超事件标题：</label><br><input id="supertitleinput" placeholder="超事件标题"><br>
             <label>超事件名言：</label><br>
-            <textarea id="supermottoinput" class="input" oninput="update(this)" placeholder="Superevent Motto:"></textarea><br>
-            <label>超事件按钮：</label><br><input id="superbuttoninput" placeholder="Superevent button:"><br><br>
-            <label>新闻标题：</label><br><input id="newstitleinput" placeholder="News title:"><br>
+            <textarea id="supermottoinput" class="input" oninput="update(this)" placeholder="超事件名言"></textarea><br>
+            <label>超事件按钮：</label><br><input id="superbuttoninput" placeholder="超事件按钮"><br><br>
+            <label>新闻标题：</label><br><input id="newstitleinput" placeholder="新闻标题"><br>
             <label>新闻内容：</label><br>
-            <textarea id="newsbodyinput" class="input" oninput="update(this)" placeholder="News:"></textarea><br>
-            <label>新闻按钮：</label><br><input id="newsbuttoninput" placeholder="News button:"><br>
+            <textarea id="newsbodyinput" class="input" oninput="update(this)" placeholder="新闻内容"></textarea><br>
+            <label>新闻按钮：</label><br><input id="newsbuttoninput" placeholder="新闻按钮"><br>
         </div>
 
         <div id="control" style="color: #cccccc;">
@@ -231,7 +231,7 @@
         </div><br>
             <span>管理预设：</span>
             <br>
-            <input id="filenameinput" style=" width: 100%;" placeholder="Filename to save...">
+            <input id="filenameinput" style=" width: 100%;" placeholder="要保存的文件名">
         <div id="presetbuttons">
             <button id="downloadJson" onclick="downloadjson()">下载预设</button>
             <button id="uploadJson" style="float: right;">上传预设</button><br>
