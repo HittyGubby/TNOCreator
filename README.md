@@ -1,7 +1,7 @@
 ## TNOCreator
 啥被高中牲写的TNO自定义事件生成器
 
-### Installation
+### 安装
 
 （为什么真的会有人装这个啊，数据库500M诶，LFS都要爆了）
 
