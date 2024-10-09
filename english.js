@@ -9,7 +9,7 @@ window.onload = function(){
     document.getElementById("descflag").src = document.getElementById("flagpic").src;
    
     //add attribs
-    updateattrib(document.getElementById('poplist'), 'input', {'min':'0','type': 'number','oninput': 'updatepop()','placeholder': '任意正数'});
+    updateattrib(document.getElementById('poplist'), 'input', {'min':'0','type': 'number','oninput': 'updatepop()','placeholder': 'Any Positive Number'});
     updateattrib(document.getElementById('basics'), 'input', {'class': 'input','oninput': 'update(this)'});
     updateattrib(document.getElementById('description'), 'input', {'class': 'input','oninput': 'update(this)'});
     updateattrib(document.body, 'button',{'onmouseover':'this.style.opacity = 0.7','onmouseleave':'this.style.opacity = 1'})
@@ -59,7 +59,7 @@ async function autoLogin() {
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
       //if(data.ok)
       if(data.message!='No saved presets')
-        {if(confirm(`加载上次保存的 "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}
+        {if(confirm(`Load last saved preset "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}
     } 
       else {console.log('Auto-login failed:', data.message);}
 }
@@ -94,14 +94,14 @@ async function login(){
       document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
     } else if (data.message === 'User not found') {
       if(user!=''){
-      if (confirm('用户不存在。注册？')) {
+      if (confirm('User not found. Register?')) {
           const registerResponse = await fetch('/register', {
               method: 'POST',headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({ user, pass })});
           const registerData = await registerResponse.json();
           if (registerData.success) {
               document.cookie = `session=${registerData.cookie}; path=/`;
-              alert('已注册');
+              alert('Registered');
               username = user;
               loadPresets(user);
               document.getElementById('username').value = '';
@@ -114,7 +114,7 @@ async function login(){
               const d = new Date();
               const u = username==="" ? username : " - "+username;
               document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
-          } else {alert('注册失败');}}}} else {alert('登录失败');}
+          } else {alert('Registration failed!');}}}} else {alert('Login failed!');}
 }
 
 function logout(){
@@ -132,7 +132,7 @@ const d = new Date();
 const u = username==="" ? username : " - "+username;
 document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
 document.querySelectorAll('.uploadbutton').forEach(b => {
-  b.onclick=function(){alert('登录后才可以上传！')};})
+  b.onclick=function(){alert('Login to upload!')};})
 }
 
 function base64Encode(str) {return btoa(unescape(encodeURIComponent(str)));}
@@ -160,7 +160,7 @@ function loadPresets(user) {
             del.style = "transition: 0.3s; background: url('template/closebutton_small.png') no-repeat; border: none; width: 26px; height: 26px; float: right;";
             del.addEventListener('click', (event) => {
                 event.stopPropagation();
-                if (confirm("确认移除预设？")) {
+                if (confirm("Sure to remove preset?")) {
                     fetch(`/presetsdel?${params.toString()}`, {method: 'GET',headers: {'id': preset.id}});
                     dropdown.removeChild(option);}});option.appendChild(del);});});
 }
@@ -173,7 +173,7 @@ function screenshotpiechart(){
   capture(document.getElementById('piechart'),'#00000000',100,100)}
 
 function capture(ele,bkg,width,height) {
-    document.getElementById('screenshotprogress').innerHTML = '正在捕捉窗口内容'
+    document.getElementById('screenshotprogress').innerHTML = 'Capturing Contents...'
     htmlToImage.toBlob(ele, {
       pixelRatio:Number(document.getElementById('screenshotscale').value),
       width:width,
@@ -183,7 +183,7 @@ function capture(ele,bkg,width,height) {
       //,quality: Number(document.getElementById('screenshotquality').value)
     }).then(async (blob) => {
         const compressedFile = await imageCompression(blob,{useWebWorker: true,alwaysKeepResolution:true,
-        onProgress: (prog)=>{document.getElementById('screenshotprogress').innerHTML=`图片已压缩${prog}%`;}});
+        onProgress: (prog)=>{document.getElementById('screenshotprogress').innerHTML=`Image ${prog}% Compressed`;}});
       const a = document.createElement('a');
       const d = new Date();
       const u = username === "" ? username : " - " + username;
@@ -191,7 +191,7 @@ function capture(ele,bkg,width,height) {
       a.href = URL.createObjectURL(compressedFile);
       a.click();
       a.remove();
-      document.getElementById('screenshotprogress').innerHTML = '完成！'
+      document.getElementById('screenshotprogress').innerHTML = 'Done!'
     })
 }
 
@@ -228,8 +228,8 @@ function downloadjson(){
 function savejson(){
   if(username != ""){
   //jsonupload(JSON.stringify(returnjson()),'save');
-  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':'save','name':base64Encode(document.getElementById('filenameinput').value)},body:JSON.stringify(returnjson())}).then(response => {if (response.ok) {alert('Saved!');loadPresets(username)} else {alert('失败！')}})}
-  else alert('登录之后才能保存云预设！')
+  fetch('/preset',{method:'POST',headers:{'Content-Type':'application/json','username':base64Encode(username),'method':'save','name':base64Encode(document.getElementById('filenameinput').value)},body:JSON.stringify(returnjson())}).then(response => {if (response.ok) {alert('Saved!');loadPresets(username)} else {alert('FAILED!!1!')}})}
+  else alert('Cloud Saves requires you to log in.')
 }
 
 function returnjson(){
@@ -405,12 +405,12 @@ let remsidebar = "11px";
 function sidebartoggle(){
   if (document.getElementById("sidebar").style.right == "-"+remsidebar){
     document.getElementById("sidebar").style.right = "0px";
-    document.getElementById("sidebarbutton").innerHTML = "隐藏侧栏";
+    document.getElementById("sidebarbutton").innerHTML = "Hide Editor";
     document.getElementById("sfxopenwindow").play();}
   else{
     remsidebar = window.getComputedStyle(document.getElementById("sidebar")).width;
     document.getElementById("sidebar").style.right = "-"+remsidebar;
-    document.getElementById("sidebarbutton").innerHTML = "显示侧栏";
+    document.getElementById("sidebarbutton").innerHTML = "Show Editor";
     document.getElementById("sfxclosewindow").play();}
 }
 
@@ -427,7 +427,7 @@ function check(c){
   } 
 }
 
-let lang="中文"
+let lang="English"
 function langchange(){
   document.getElementById("lang").innerHTML == "English" ? langchtocn() : langchtoen();
   document.getElementById("sfxcheck").play();
@@ -467,13 +467,13 @@ function genpiccontainer(){
     div.id = id;
 
     const span = document.createElement('span');
-    span.className = 'spancn';
+    span.textContent = id.charAt(0).toUpperCase() + id.slice(1) + ':';
     div.appendChild(span);
 
     const input = document.createElement('input');
     input.className = 'queryinput';
     input.id = `${id}input`;
-    //input.placeholder = `Search for ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
+    input.placeholder = `Search for ${id.charAt(0).toUpperCase() + id.slice(1)}...`;
     input.style.fontFamily = 'Aldrich, FZRui';
     input.addEventListener('input', function() {
       const list=this.id.replace('input','');
@@ -507,8 +507,8 @@ function genpiccontainer(){
     //upload.onclick=function() { uploadasset(this); };
     upload.className = 'uploadbutton'
     upload.id = `upload${id}`;
-    upload.innerHTML=`上传`;
-    upload.onclick=function(){alert('先登录才能上传！')}
+    upload.innerHTML=`Upload`;
+    upload.onclick=function(){alert('Login to upload!')}
     div.appendChild(upload);
 
     const userinput = document.createElement('input');
@@ -538,7 +538,7 @@ function genpiccontainer(){
             del.style = "transition: 0.3s; background: url('template/closebutton_small.png') no-repeat; border: none; width: 26px; height: 26px; float: right;";
             del.addEventListener('click', (event) => {
               event.stopPropagation();
-              if (confirm("确认移除图片？")) {
+              if (confirm("Sure to remove asset?")) {
                 fetch(`/assetdel`, {
                   method: 'POST',
                   headers: {
@@ -569,14 +569,8 @@ function genpiccontainer(){
     document.getElementById('piccontainer').appendChild(div);
   });
   const col = document.getElementsByClassName('queryuserinput')
-  const ph=['任意分辨率','长宽比 3:4','大约 68x68','大约 75x75','大约 100x80','大约 60x60','大约 50x50','590x404','162x420','480x70']
+  const ph=['Any','Ratio 3:4','Approax 68x68','Approax 75x75','Approax 100x80','Approax 60x60','Approax 50x50','590x404','162x420','480x70']
   for(let i=0;i<=9;i++){col[i].placeholder = ph[i]}
-  const spancn = document.getElementsByClassName('spancn')
-  const spancne=['国旗：','领导人：','意识形态：','阵营：','国策：','经济：','亚经济','超事件：','新闻：','新闻页眉：']
-  for(let i=0;i<=9;i++){spancn[i].innerHTML = spancne[i]}
-  const querycn = document.getElementsByClassName('queryinput')
-  const querycne=['搜索国旗：','搜索领导人：','搜索意识形态：','搜索阵营：','搜索国策：','搜索经济：','搜索亚经济','搜索超事件：','搜索新闻：','搜索新闻页眉：']
-  for(let i=0;i<=9;i++){querycn[i].placeholder = querycne[i]}
 }
 
 function uploadasset(ele) {
