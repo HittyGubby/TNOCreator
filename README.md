@@ -1,4 +1,43 @@
 ## TNOCreator
+啥被高中牲写的TNO自定义事件生成器
+
+### Installation
+
+（为什么真的会有人装这个啊，数据库500M诶，LFS都要爆了）
+
+0. git clone 仓库 **用了LFS存图片，所以你得先装 `git-lfs` 然后 `git-lfs clone *repo*`**
+
+1. 安装 NodeJS
+
+2. npm 安装依赖
+
+```
+npm install express
+npm install sqlite3
+npm install path
+npm install crypto
+npm install cookie-parser
+npm install multer
+```
+
+3. `node index.mjs` 运行服务器，**默认端口 5500**
+
+（无人值守运行请执行 `npm install forever` 和 `forever index.mjs`）
+
+### **注意了...**
+
+0. 理论上这个项目已经做完了但是后续可能会交给GPT优化（
+
+1. 输入框里是支持html格式（如颜色，字体等）的哦（好吧其实本来就支持。。。）
+
+2. 部署了github pages但是是静态的所以只能改文字，用不了（
+
+3. 暂不支持用户删除（好吧不想做）
+
+
+
+
+## TNOCreator
 TNO customizable showcase generator by a web noob
 
 ### Installation
