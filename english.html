@@ -96,8 +96,12 @@
 
 <div class="draggable" id="newswindow" style="position: absolute; left: 910px;top: 180px; z-index: 4;user-select: none;" onclick="dragElement(this)" ondrag="dragElement(this)">
     <img src="template/news/event_news_bg.png" style="position: relative;">
-    <img id="headerpic" class="pic" src="preset/nazist-Germany.png" style="position:absolute; height: 70px; width:480px;top: 15px; left: 25px;">
-    <img id="newspic" class="pic" src="preset/GER_german_civil_war.png" style="position:absolute; height: 420px; width:162px;top: 140px; left: 25px;">
+    <div style="position:absolute;  height: 70px; width:480px;top: 15px; left: 25px;">
+        <img id="headerpic" class="pic" src="preset/nazist-Germany.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
+    </div>
+    <div style="position:absolute;position:absolute; height: 420px; width:162px;top: 140px; left: 25px;">
+        <img id="newspic" class="pic" src="preset/GER_german_civil_war.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
+    </div>
     <button id="newsbutton" onclick="document.getElementById('sfxcheck').play();" style="position:absolute; top: 500px; left: 163px;transition: 0.2s; background: url('template/news/event_option_entry.png') no-repeat; border: none; width: 352px; height: 52px; font-family:Type;font-size: 15px;color: #000000;" onmouseover="this.style.opacity = 0.8" onmouseleave="this.style.opacity = 1">The end of the Reich, surely.</button>
 
     <div style="position:absolute;display: flex; left: 10px; top:120px; justify-content: center; align-items: center; inline-size: 500px;">
@@ -111,7 +115,9 @@ Though not much is known about the fate of the Reich's eastern administrations, 
 
 <div class="draggable" id="superwindow" style="position: absolute; left: 315px;top: 250px; z-index: 4;user-select: none;" onclick="dragElement(this)" ondrag="dragElement(this)">
     <img src="template/super_frame.png" style="position: relative;width: 600px;z-index: 2;">
-        <img id="superpic" class="pic" src="preset/german_civil_war.png" style="position:absolute; width:590px;height:404px;top:52px;left: 5px;">
+    <div style="position:absolute;position:absolute; width:590px;height:404px;top:52px;left: 5px;">
+        <img id="superpic" class="pic" src="preset/german_civil_war.png" style="position:absolute; top:0; left:0; height: inherit; width: inherit;">
+    </div>
     <div style="position:absolute; top: 390px; left: 322px;display: flex; justify-content: center; align-items: center;" >
         <img src="template/superevent_text_underlay.png" style="position:absolute;">
     </div>
