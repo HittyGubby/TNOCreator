@@ -25,7 +25,9 @@ window.onload = function(){
     updatepop();
 
     //init pic data
-    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");});
+    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.href,'').replace('preset/','')
+      //.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");
+    });
     
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
@@ -325,7 +327,8 @@ function fetchpic(parent,tag,deform) {
   const inputs = div.getElementsByClassName(tag);
   const inputValues = {};
   if(deform){
-  for (let input of inputs) {inputValues[input.id] = `${input.value.replace(/ /g,"_")}.png`;}}
+  //for (let input of inputs) {inputValues[input.id] = `${input.value.replace(/ /g,"_")}.png`;}}
+  for (let input of inputs) {inputValues[input.id] = input.value;}}
   else for (let input of inputs) {inputValues[input.id] = input.value;}
   return inputValues;
 }
@@ -486,9 +489,11 @@ function genpiccontainer(){
               autocompleteList.innerHTML = '';
               files.forEach(file => {
                   const item = document.createElement('div');
-                  item.textContent = file.name.replace(/_/g," ").replace(".png","");
+                  item.textContent = file.name
+                  //.replace(/_/g," ").replace(".png","");
                   item.addEventListener('click', () => {
-                      document.getElementById(`${list}input`).value = file.name.replace(/_/g," ").replace(".png","");
+                      document.getElementById(`${list}input`).value = file.name
+                      //.replace(/_/g," ").replace(".png","");
                       document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
                       autocompleteList.innerHTML = '';
                       document.getElementById("descflag").src=document.getElementById("flagpic").src;});
