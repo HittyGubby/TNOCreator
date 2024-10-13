@@ -532,6 +532,8 @@ function genpiccontainer(){
               files.forEach(file => {
                   const item = document.createElement('div');
                   item.textContent = file.filename;
+                  item.style.maxWidth='400px'
+                  item.style.overflowWrap='break-word';
                   item.addEventListener('click', () => {
                       document.getElementById(`${list}userinput`).value = file.filename;
                       document.getElementById(`${list}pic`).src = `/api/user/${list}/${file.filename}`;
