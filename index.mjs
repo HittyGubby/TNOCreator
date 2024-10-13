@@ -139,26 +139,45 @@ setupDatabaseRoutesUser(['flag', 'portrait', 'focus', 'econ', 'econsub', 'factio
 
 
 app.post('/upload', upload.array('files'), (req, res) => {
-    const udb = new sqlite3.Database(`data/user.db`);
-    const db = new sqlite3.Database(`data/upload.db`);
-    const d = new Date();
-    const files = req.files;
-    const cookie = req.cookies.session;
-    udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-      if (err) {return res.status(500).send('Error retrieving user');}
-      if (!row) {return res.status(401).send('Unauthorized');}
-      if (row.user !== base64Decode(req.body.username)) {return res.status(401).send('Unauthorized');}
-      else {const insertFile = (file, callback) => {
-          db.run(`INSERT INTO ${req.headers['type']} (filename, time, ip, user, ua, data, shared) VALUES (?, ?, ?, ?, ?, ? ,?)`,
-            [file.originalname,d.toLocaleString("zh-CN"),req.ip,
-            base64Decode(req.body.username),req.headers['user-agent'],file.buffer,req.headers['shared']], callback);};
-        let completed = 0;
-        const errors = [];
-        files.forEach(file => {
-          insertFile(file, (err) => {if (err) {errors.push(err.message);}completed++;
-            if (completed === files.length) {
-              if (errors.length > 0) {res.status(500).json({ error: errors });} 
-              else {res.status(200).json({ message: 'Files uploaded successfully' });}}});});}});});
+  const udb = new sqlite3.Database('data/user.db');
+  const db = new sqlite3.Database('data/upload.db');
+  const d = new Date();
+  const files = req.files;
+  const cookie = req.cookies.session;
+
+  udb.get('SELECT user FROM auth WHERE cookie = ?', [cookie], (err, row) => {
+    if (err) { return res.status(500).send('Error retrieving user'); }
+    if (!row) { return res.status(401).send('Unauthorized'); }
+    if (row.user !== base64Decode(req.body.username)) {
+      return res.status(401).send('Unauthorized');
+    } else {
+      const insertFile = (file, callback) => {
+        db.run(
+          `INSERT INTO ${req.headers['type']} (filename, time, ip, user, ua, data, shared) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+          [file.originalname, d.toLocaleString("zh-CN"), req.ip, base64Decode(req.body.username), req.headers['user-agent'], file.buffer, req.headers['shared']],
+          callback
+        );
+      };
+
+      let completed = 0;
+      const errors = [];
+      files.forEach(file => {
+        insertFile(file, (err) => {
+          if (err) { errors.push(err.message); }
+          completed++;
+          if (completed === files.length) {
+            if (errors.length > 0) {
+              res.status(500).json({ error: errors });
+            } else {
+              res.status(200).json({ message: 'Files uploaded successfully' });
+            }
+          }
+        });
+      });
+    }
+  });
+});
+
 
 
 app.post('/assetdel', (req, res) => {
