@@ -1,6 +1,8 @@
 ## TNOCreator
 啥被高中牲写的TNO自定义事件生成器
 
+基于vanilla javascript，服务端使用NodeJS，数据库基于sqlite3
+
 ### 安装
 
 （为什么真的会有人装这个啊，数据库500M诶，LFS都要爆了）
