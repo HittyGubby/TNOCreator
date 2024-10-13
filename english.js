@@ -104,7 +104,7 @@ async function login(){
           if (registerData.success) {
               document.cookie = `session=${registerData.cookie}; path=/`;
               alert('Registered');
-              username = user;
+              username = document.getElementById('username').value;
               loadPresets(user);
               document.getElementById('username').value = '';
               document.getElementById('password').value = '';
@@ -113,6 +113,8 @@ async function login(){
               document.getElementById('loginunfoldButton').style.display = 'none';
               document.getElementById('loginButton').style.display = 'none';
               document.getElementById('logoutButton').style.display = 'inline-block';
+              document.querySelectorAll('.uploadbutton').forEach(b => {
+                b.onclick=function(){uploadasset(this)};})
               const d = new Date();
               const u = username==="" ? username : " - "+username;
               document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
@@ -582,16 +584,23 @@ function uploadasset(ele) {
   const type = ele.id.replace("upload", "");
   const fileInput = document.getElementById(`${type}uploader`);
   fileInput.click();
-  fileInput.onchange = function() {
+  fileInput.onchange = function () {
     const files = fileInput.files;
     const formData = new FormData();
     formData.append('username', base64Encode(username));
     for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);}
-      document.getElementById(`${type}userinput`).value = files[0].name;
-      document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
-    fetch(`/upload`, {method: 'POST',headers:{'type':type,'shared':shared},body: formData})
+      formData.append('files', files[i]);
+    }
+    document.getElementById(`${type}userinput`).value = files[0].name;
+    document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+    
+    fetch('/upload', {
+      method: 'POST',
+      headers: { 'type': type, 'shared': shared },
+      body: formData
+    })
     .then(response => response.json())
-    .then(result => {console.log(result);})
-    .catch(error => {console.error('Error:', error);});};
+    .then(result => { console.log(result); })
+    .catch(error => { console.error('Error:', error); });
+  };
 }
