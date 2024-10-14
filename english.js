@@ -452,7 +452,7 @@ function langchtoen(){
     document.getElementById("economycn").style.display = "none";
     lang="English";}
 
-var shared=true;
+var shared=false;
 function checkshare(){
   c=document.getElementById('checkboxshared')
     if (shared){
@@ -600,8 +600,8 @@ function uploadasset(ele) {
       body: formData
     })
     .then(response => response.json())
-    .then(result => { console.log(result); })
+    .then(result => { console.log(result); document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;})
     .catch(error => { console.error('Error:', error); });
-    document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+    
   };
 }
