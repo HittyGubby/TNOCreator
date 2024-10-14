@@ -608,7 +608,9 @@ function uploadasset(ele) {
       body: formData
     })
     .then(response => response.json())
-    .then(result => { console.log(result);document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}` })
+    .then(result => { console.log(result);document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+      document.getElementById("descflag").src = document.getElementById("flagpic").src;
+    })
     .catch(error => { console.error('Error:', error); });
     
   };
