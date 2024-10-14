@@ -190,8 +190,9 @@ function capture(ele,bkg,width,height) {
         onProgress: (prog)=>{document.getElementById('screenshotprogress').innerHTML=`Image ${prog}% Compressed`;}});
       const a = document.createElement('a');
       const d = new Date();
-      const u = username === "" ? username : " - " + username;
-      a.download = `${d.toLocaleString("zh-CN")}${u}.png`;
+      //const u = username === "" ? username : " - " + username;
+      //a.download = `${d.toLocaleString("zh-CN")}${u}.png`;
+      a.download = `${d.toLocaleString("zh-CN")}.png`;
       a.href = URL.createObjectURL(compressedFile);
       a.click();
       a.remove();
