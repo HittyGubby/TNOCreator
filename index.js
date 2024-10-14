@@ -600,7 +600,7 @@ function uploadasset(ele) {
       formData.append('files', files[i]); 
     }
     document.getElementById(`${type}userinput`).value = files[0].name;
-    document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+    ;
     
     fetch('/upload', {
       method: 'POST',
@@ -610,5 +610,6 @@ function uploadasset(ele) {
     .then(response => response.json())
     .then(result => { console.log(result); })
     .catch(error => { console.error('Error:', error); });
+    document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`
   };
 }
