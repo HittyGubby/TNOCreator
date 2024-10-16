@@ -7,6 +7,7 @@
     outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
 #poplist input{height: 19px; font-family: Aldrich,FZRui; background-color: #cccccc20;
     outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 52%;  float: right;}
+#poplist label{text-shadow: 1px 1px 0px rgba(255, 255, 255, 1);}
 #description input{height: 19px; font-family: Aldrich,FZRui; background-color: #cccccc20;
     outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
 #presetbuttons button{color: #cccccc; transition: 0.3s; background: url('template/button_170x34.png') no-repeat; border: none;
