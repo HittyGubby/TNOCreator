@@ -19,7 +19,7 @@ window.onload = function(){
 
     //init input data
     document.getElementById("focusproginput").value = Math.round(Number(document.getElementById("progressbar").style.width.replace("px",""))/237*100);
-    const values = [90, 0, 0, 5.6, 30.6, 41.7, 11.1, 8.3, 2.1, 0, 2, 1.4, 0];
+    const values = [90, 0, 0, 5.6, 30.6, 41.7, 11.1, 8.3, 2.1, 0, 0, 2, 1.4, 0];
     const c = document.getElementById("poplist").children;
     for (let i=0; i<values.length; i++) {c[3*i+1].value=values[i];}
     updatepop();
@@ -283,7 +283,7 @@ function jsonupdate(jsonData){
    {document.getElementById(e).src = jsonData.picturepath[e]}
   for (const e in jsonData.desc){document.getElementById(e).value = jsonData.desc[e];}
   for (const e in jsonData.desclong){document.getElementById(e).value = jsonData.desclong[e];}
-  for (let i=0; i<13; i++){document.getElementById("poplist").children[3*i+1].value=jsonData.data[i];}
+  for (let i=0; i<14; i++){document.getElementById("poplist").children[3*i+1].value=jsonData.data[i];}
   for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.left = jsonData.pos[e][0];}
   for (const e in jsonData.pos){document.getElementById(e.replace("pos","")).style.top = jsonData.pos[e][1];}
   for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.width = jsonData.size[e][0];}
@@ -322,7 +322,7 @@ function fetchdata(parent,tag) {
 function fetcharr(){
   const c = document.getElementById("poplist").children;
   const values = {};
-  for (let i=0; i<13; i++) {values[i]=c[3*i+1].value;}
+  for (let i=0; i<14; i++) {values[i]=c[3*i+1].value;}
   return values;
 }
 function fetchpic(parent,tag,deform) {
@@ -389,8 +389,9 @@ function updatepop() {
     rgb(25, 25, 25) 0 ${scaledAngles[2]}deg,rgb(106, 35, 0) 0 ${scaledAngles[3]}deg,
     rgb(131, 70, 0) 0 ${scaledAngles[4]}deg,rgb(90, 90, 90) 0 ${scaledAngles[5]}deg,
     rgb(157, 157, 157) 0 ${scaledAngles[6]}deg,rgb(0, 0, 214) 0 ${scaledAngles[7]}deg,
-    rgb(29, 157, 255) 0 ${scaledAngles[8]}deg,rgb(255, 0, 174) 0 ${scaledAngles[9]}deg,
-    rgb(204, 0, 0) 0 ${scaledAngles[10]}deg,rgb(149, 0, 0) 0 ${scaledAngles[11]}deg)`;
+    rgb(47, 54, 127) 0 ${scaledAngles[8]}deg,
+    rgb(29, 157, 255) 0 ${scaledAngles[9]}deg,rgb(255, 0, 174) 0 ${scaledAngles[10]}deg,
+    rgb(204, 0, 0) 0 ${scaledAngles[11]}deg,rgb(149, 0, 0) 0 ${scaledAngles[12]}deg)`;
 }
 
 function update(input){
