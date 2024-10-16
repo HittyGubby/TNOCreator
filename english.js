@@ -390,7 +390,7 @@ function updatepop() {
     rgb(131, 70, 0) 0 ${scaledAngles[4]}deg,rgb(90, 90, 90) 0 ${scaledAngles[5]}deg,
     rgb(157, 157, 157) 0 ${scaledAngles[6]}deg,rgb(0, 0, 214) 0 ${scaledAngles[7]}deg,
     rgb(47, 54, 127) 0 ${scaledAngles[8]}deg,
-    rgb(29, 157, 255) 0 ${scaledAngles[9]}deg,rgb(255, 0, 174) 0 ${scaledAngles[10]}deg,
+    rgb(29, 157, 255) 0 ${scaledAngles[9]}deg,rgb(200, 0, 154) 0 ${scaledAngles[10]}deg,
     rgb(204, 0, 0) 0 ${scaledAngles[11]}deg,rgb(149, 0, 0) 0 ${scaledAngles[12]}deg)`;
 }
 
