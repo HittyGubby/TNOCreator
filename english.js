@@ -19,7 +19,7 @@ window.onload = function(){
 
     //init input data
     document.getElementById("focusproginput").value = Math.round(Number(document.getElementById("progressbar").style.width.replace("px",""))/237*100);
-    const values = [90, 0, 0, 5.6, 30.6, 41.7, 11.1, 8.3, 2.1, 0, 0, 2, 1.4];
+    const values = [90, 0, 0, 5.6, 30.6, 41.7, 11.1, 8.3, 2.1, 0, 0, 2, 1.4, 0];
     const c = document.getElementById("poplist").children;
     for (let i=0; i<values.length; i++) {c[3*i+1].value=values[i];}
     updatepop();
