@@ -25,7 +25,7 @@ window.onload = function(){
     updatepop();
 
     //init pic data
-    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.href,'').replace('preset/','')
+    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.origin,'').replace('/preset/','')
       //.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");
     });
     
@@ -183,6 +183,12 @@ function capture(ele,bkg,width,height) {
       width:width,
       height:height,
       backgroundColor: bkg,
+      //fontEmbedCSS: true,
+      preferredFontFormat: `@font-face {font-family: Bombardier;src: url(fonts/BOMBARD_.ttf) format('truetype');}
+@font-face {font-family: Aldrich;src: url(fonts/Aldrich-Regular.ttf) format('truetype');}
+@font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf) format('truetype');}
+@font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf) format('truetype');}
+@font-face {font-family: FZWen;src: url(fonts/FZWH.TTF) format('truetype');}`,
       filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
       //,quality: Number(document.getElementById('screenshotquality').value)
     }).then(async (blob) => {

@@ -1,8 +1,8 @@
-@font-face {font-family: Bombardier;src: url(fonts/BOMBARD_.ttf);}
-@font-face {font-family: Aldrich;src: url(fonts/Aldrich-Regular.ttf);}
-@font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf);}
-@font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf);}
-@font-face {font-family: FZWen;src: url(fonts/FZWH.TTF);}
+@font-face {font-family: Bombardier;src: url(fonts/BOMBARD_.ttf) format('truetype');}
+@font-face {font-family: Aldrich;src: url(fonts/Aldrich-Regular.ttf) format('truetype');}
+@font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf) format('truetype');}
+@font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf) format('truetype');}
+@font-face {font-family: FZWen;src: url(fonts/FZWH.TTF) format('truetype');}
 #basics input{height: 19px; font-family: Aldrich,FZRui; background-color: #cccccc20;
     outline:1px solid #7ccccc; color: #7ccccc; font-size: 15px;text-align: center; width: 100%;}
 #poplist input{height: 19px; font-family: Aldrich,FZRui; background-color: #cccccc20;
