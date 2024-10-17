@@ -21,11 +21,11 @@
     </script>
     <link rel="stylesheet" href="js/jquery-ui.css">
     <link rel="stylesheet" href="index.css">
-    <link rel="preload" as="Bombardier" href="/fonts/BOMBARD_.ttf" type="font/ttf" crossorigin="anonymous">
-    <link rel="preload" as="Aldrich" href="/fonts/Aldrich-Regular.ttf" type="font/ttf" crossorigin="anonymous">
-    <link rel="preload" as="FZRui" href="/fonts/FZRuiZHJW.ttf" type="font/ttf" crossorigin="anonymous">
-    <link rel="preload" as="Type" href="/fonts/OldTyperNr.ttf" type="font/ttf" crossorigin="anonymous">
-    <link rel="preload" as="FZWen" href="/fonts/FZWH.TTF" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" as="font" href="/fonts/BOMBARD_.ttf" crossorigin="anonymous">
+    <link rel="preload" as="font" href="/fonts/Aldrich-Regular.ttf" crossorigin="anonymous">
+    <link rel="preload" as="font" href="/fonts/FZRuiZHJW.ttf" crossorigin="anonymous">
+    <link rel="preload" as="font" href="/fonts/OldTyperNr.ttf" crossorigin="anonymous">
+    <link rel="preload" as="font" href="/fonts/FZWH.TTF" crossorigin="anonymous">
 </head>
 <body style="background-color:rgb(51, 51, 51)">
 <div id="main" style="user-select: none; position:absolute;z-index: 8;">
@@ -173,6 +173,7 @@
             <label>意识形态：</label><br><input id="ideologytextinput" placeholder="意识形态"><br>
             <label>选举：</label><br><input id="electioninput" placeholder="选举"><br><br>
             <label>国策：</label><br><input id="focustextinput" placeholder="国策">
+            <p>若出现字体异常，新闻字体颜色异常等，<br>请尝试：停用黑暗模式，更换浏览器。<br>若无效，欢迎提Issue！</p>
         </div>
 <input type="file" id="fileInput" style="display: none;">
     <div id="data" style="color: #cccccc;">
@@ -225,7 +226,7 @@
             <button id="screenshotpiechart" onclick="screenshotpiechart()">截饼图</button>
             <br>
             <span>截图缩放：</span>
-            <input id="screenshotscale" value="2" placeholder="Integer" style="width: 50%;float: right;">
+            <input id="screenshotscale" value="2" placeholder="正整数" style="width: 50%;float: right;">
         </div>
         <br>
         <div id="checkboxs">
