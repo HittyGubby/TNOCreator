@@ -105,7 +105,7 @@ async function login(){
               document.cookie = `session=${registerData.cookie}; path=/`;
               alert('Registered');
               username = document.getElementById('username').value;
-              loadPresets(user);
+              //loadPresets(user);
               document.getElementById('username').value = '';
               document.getElementById('password').value = '';
               document.getElementById('username').style.display = 'none';

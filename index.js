@@ -184,11 +184,6 @@ function capture(ele,bkg,width,height) {
       height:height,
       backgroundColor: bkg,
       //fontEmbedCSS: true,
-      preferredFontFormat: `@font-face {font-family: Bombardier;src: url(fonts/BOMBARD_.ttf) format('truetype');}
-@font-face {font-family: Aldrich;src: url(fonts/Aldrich-Regular.ttf) format('truetype');}
-@font-face {font-family: FZRui;src: url(fonts/FZRuiZHJW.ttf) format('truetype');}
-@font-face {font-family: Type;src: url(fonts/OldTyperNr.ttf) format('truetype');}
-@font-face {font-family: FZWen;src: url(fonts/FZWH.TTF) format('truetype');}`,
       filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
       //,quality: Number(document.getElementById('screenshotquality').value)
     }).then(async (blob) => {
@@ -608,7 +603,7 @@ function uploadasset(ele) {
       formData.append('files', files[i]); 
     }
     document.getElementById(`${type}userinput`).value = files[0].name;
-    ;
+
     
     fetch('/upload', {
       method: 'POST',
@@ -616,7 +611,7 @@ function uploadasset(ele) {
       body: formData
     })
     .then(response => response.json())
-    .then(result => { console.log(result);document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
+    .then(result => { console.log(result); document.getElementById(`${type}pic`).src = `/api/user/${type}/${files[0].name}`;
       document.getElementById("descflag").src = document.getElementById("flagpic").src;
     })
     .catch(error => { console.error('Error:', error); });
