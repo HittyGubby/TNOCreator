@@ -25,7 +25,7 @@ window.onload = function(){
     updatepop();
 
     //init pic data
-    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.href,'').replace('preset/','')
+    document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.origin,'').replace('/preset/','')
       //.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");
     });
     
