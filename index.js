@@ -31,9 +31,7 @@ window.onload = function(){
     
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
-    const d = new Date();
-    const u = username==="" ? username : " - "+username;
-    document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+    document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
     if(document.cookie!=""){
       document.getElementById('username').value = '';
       document.getElementById('password').value = '';
@@ -56,9 +54,7 @@ async function autoLogin() {
       document.querySelectorAll('.uploadbutton').forEach(b => {
         b.onclick=function(){uploadasset(this)};})
       loadPresets(data.user);
-      const d = new Date();
-      const u = username==="" ? username : " - "+username;
-      document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+      document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
       //if(data.ok)
       if(data.message!='No saved presets')
         {if(confirm(`加载上次保存的 "${data.name}" ?`)){jsonupdate(JSON.parse(data.data));}}
@@ -91,9 +87,7 @@ async function login(){
       document.getElementById('logoutButton').style.display = 'inline-block';
       document.querySelectorAll('.uploadbutton').forEach(b => {
         b.onclick=function(){uploadasset(this)};})
-      const d = new Date();
-      const u = username==="" ? username : " - "+username;
-      document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+      document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
     } else if (data.message === 'User not found') {
       if(user!=''){
       if (confirm('用户不存在。注册？')) {
@@ -115,9 +109,7 @@ async function login(){
               document.getElementById('logoutButton').style.display = 'inline-block';
               document.querySelectorAll('.uploadbutton').forEach(b => {
                 b.onclick=function(){uploadasset(this)};})
-              const d = new Date();
-              const u = username==="" ? username : " - "+username;
-              document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+              document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
           } else {alert('注册失败');}}}} else {alert('登录失败');}
 }
 
@@ -132,9 +124,7 @@ function logout(){
     document.getElementById('logoutButton').style.display = 'none';
     document.getElementById('username').style.display = 'none';
 document.getElementById('password').style.display = 'none';
-const d = new Date();
-const u = username==="" ? username : " - "+username;
-document.getElementById('filenameinput').value = `${d.toLocaleString("zh-CN")}${u}`
+document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
 document.querySelectorAll('.uploadbutton').forEach(b => {
   b.onclick=function(){alert('登录后才可以上传！')};})
 }
@@ -176,6 +166,7 @@ function screenshot(){
 function screenshotpiechart(){
   capture(document.getElementById('piechart'),'#00000000',100,100)}
 
+  /*
 function capture(ele,bkg,width,height) {
     document.getElementById('screenshotprogress').innerHTML = '正在捕捉窗口内容'
     htmlToImage.toBlob(ele, {
@@ -183,23 +174,65 @@ function capture(ele,bkg,width,height) {
       width:width,
       height:height,
       backgroundColor: bkg,
-      //fontEmbedCSS: true,
+      fontEmbedCSS: true,
       filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
       //,quality: Number(document.getElementById('screenshotquality').value)
     }).then(async (blob) => {
         const compressedFile = await imageCompression(blob,{useWebWorker: true,alwaysKeepResolution:true,
         onProgress: (prog)=>{document.getElementById('screenshotprogress').innerHTML=`图片已压缩${prog}%`;}});
       const a = document.createElement('a');
-      const d = new Date();
-      //const u = username === "" ? username : " - " + username;
-      //a.download = `${d.toLocaleString("zh-CN")}${u}.png`;
-      a.download = `${d.toLocaleString("zh-CN")}.png`;
+      a.download = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`;
       a.href = URL.createObjectURL(compressedFile);
       a.click();
       a.remove();
       document.getElementById('screenshotprogress').innerHTML = '完成！'
     })
+}*/ //with compression codes
+
+async function capture(ele, bkg, width, height) {
+  const svgData = await htmlToImage.toSvg(ele, {
+    pixelRatio: Number(document.getElementById('screenshotscale').value),
+    width: width,
+    height: height,
+    backgroundColor: bkg,
+    filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }
+  });
+
+  const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+  const svgUrl = URL.createObjectURL(svgBlob);
+
+  const img = new Image();
+  img.crossOrigin = 'Anonymous'; // In case the SVG has cross-origin resources
+  img.src = svgUrl;
+
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = bkg;
+    ctx.fillRect(0, 0, width, height);
+    ctx.drawImage(img, 0, 0);
+
+    canvas.toBlob((pngBlob) => {
+      const a = document.createElement('a');
+      a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.png`;
+      a.href = URL.createObjectURL(pngBlob);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(svgUrl);
+      URL.revokeObjectURL(a.href); // Clean up
+    }, 'image/png');
+  };
+
+  img.onerror = (err) => {
+    console.error('Error loading SVG image:', err);
+  };
 }
+
+
+
+
 
 function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
   Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
@@ -386,13 +419,13 @@ function updatepop() {
     let scaledAngles = cumulativeAngles.map(angle => angle * scaleFactor);
     document.getElementById("piechart").style.background = `conic-gradient(
     from ${a[1]}deg, 
-    rgb(18, 184, 0) 0 ${scaledAngles[0]}deg,rgb(128, 0, 128) 0 ${scaledAngles[1]}deg,
-    rgb(25, 25, 25) 0 ${scaledAngles[2]}deg,rgb(106, 35, 0) 0 ${scaledAngles[3]}deg,
-    rgb(131, 70, 0) 0 ${scaledAngles[4]}deg,rgb(90, 90, 90) 0 ${scaledAngles[5]}deg,
-    rgb(157, 157, 157) 0 ${scaledAngles[6]}deg,rgb(0, 0, 214) 0 ${scaledAngles[7]}deg,
-    rgb(47, 54, 127) 0 ${scaledAngles[8]}deg,
-    rgb(29, 157, 255) 0 ${scaledAngles[9]}deg,rgb(200, 0, 154) 0 ${scaledAngles[10]}deg,
-    rgb(204, 0, 0) 0 ${scaledAngles[11]}deg,rgb(149, 0, 0) 0 ${scaledAngles[12]}deg)`;
+      rgb(18, 184, 0) 0 ${scaledAngles[0]}deg,rgb(52, 25, 80) 0 ${scaledAngles[1]}deg,
+      rgb(35, 35, 35) 0 ${scaledAngles[2]}deg,rgb(80, 50, 0) 0 ${scaledAngles[3]}deg,
+      rgb(132, 50, 0) 0 ${scaledAngles[4]}deg,rgb(75, 75, 75) 0 ${scaledAngles[5]}deg,
+      rgb(130, 130, 130) 0 ${scaledAngles[6]}deg,rgb(0, 0, 135) 0 ${scaledAngles[7]}deg,
+      rgb(39, 49, 149) 0 ${scaledAngles[8]}deg,
+      rgb(78, 97, 163) 0 ${scaledAngles[9]}deg,rgb(169, 27, 79) 0 ${scaledAngles[10]}deg,
+      rgb(155, 0, 0) 0 ${scaledAngles[11]}deg,rgb(110, 0, 0) 0 ${scaledAngles[12]}deg)`;
 }
 
 function update(input){

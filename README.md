@@ -115,8 +115,6 @@ npm install multer
 
 `jQuery` for UI and window composition
 
-`html2canvas` for fetching screenshot size 
-
 `html-to-image` for converting webpage into screenshot
 
 `browser-image-compression` for compressing screenshot(63% compression ratio on average)
