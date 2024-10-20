@@ -187,32 +187,16 @@ function capture(ele,bkg,width,height) {
     })
 }*/ //with compression
 
-function capture(ele, bkg, width, height) {
-  htmlToImage.toSvg(ele, {
-    //pixelRatio: Number(document.getElementById('screenshotscale').value),
-    width: width,
-    height: height,
-    backgroundColor: bkg,
-    filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}
-  }).then((svgData) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const v = canvg.from(ctx, svgData);
-    canvas.width = width;
-    canvas.height = height;
-    v.start();
-    setTimeout(() => {
-      canvas.toBlob((blob) => {
-        const a = document.createElement('a');
-        const d = new Date();
-        a.download = `${d.toLocaleString("zh-CN")}.png`;
-        a.href = URL.createObjectURL(blob);
-        a.click();
-        a.remove();});}, 100);})
-        //.catch((error) => {console.error('Error capturing element:', error);});
+async function capture(ele, bkg, width, height) {
+  const svgData = await htmlToImage.toSvg(ele, {
+    pixelRatio: Number(document.getElementById('screenshotscale').value),
+    width: width,height: height,backgroundColor: bkg,
+    filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }});
+    const a = document.createElement('a');
+    a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.svg`
+    a.href = svgData;
+    a.click();a.remove();
 }
-
-
 
 function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
   Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
