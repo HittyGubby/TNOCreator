@@ -189,7 +189,7 @@ function capture(ele,bkg,width,height) {
 
 async function capture(ele, bkg, width, height) {
   const svgData = await htmlToImage.toSvg(ele, {
-    pixelRatio: Number(document.getElementById('screenshotscale').value),
+    //pixelRatio: Number(document.getElementById('screenshotscale').value),
     width: width,height: height,backgroundColor: bkg,
     filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }});
     const a = document.createElement('a');
