@@ -192,47 +192,13 @@ function capture(ele,bkg,width,height) {
 async function capture(ele, bkg, width, height) {
   const svgData = await htmlToImage.toSvg(ele, {
     pixelRatio: Number(document.getElementById('screenshotscale').value),
-    width: width,
-    height: height,
-    backgroundColor: bkg,
-    filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }
-  });
-
-  const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
-  const svgUrl = URL.createObjectURL(svgBlob);
-
-  const img = new Image();
-  img.crossOrigin = 'Anonymous'; // In case the SVG has cross-origin resources
-  img.src = svgUrl;
-
-  img.onload = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = bkg;
-    ctx.fillRect(0, 0, width, height);
-    ctx.drawImage(img, 0, 0);
-
-    canvas.toBlob((pngBlob) => {
-      const a = document.createElement('a');
-      a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.png`;
-      a.href = URL.createObjectURL(pngBlob);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(svgUrl);
-      URL.revokeObjectURL(a.href); // Clean up
-    }, 'image/png');
-  };
-
-  img.onerror = (err) => {
-    console.error('Error loading SVG image:', err);
-  };
+    width: width,height: height,backgroundColor: bkg,
+    filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }});
+    const a = document.createElement('a');
+    a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.svg`
+    a.href = svgData;
+    a.click();a.remove();
 }
-
-
-
-
 
 function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
   Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
