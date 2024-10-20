@@ -36,7 +36,9 @@ npm install multer
 
 3. 暂不支持用户删除（好吧不想做）
 
+4. 截图功能搞不起来本地svg转png，这个就自己搞吧（不过svg会很大（默认7mb）因为要包括未压缩的字体图片素材等等）
 
+   顺便svg自定义更方便？
 
 
 ## TNOCreator
@@ -74,6 +76,10 @@ npm install multer
 2. Github Pages deployed but only serves static functions so you can only change texts but cannot add asset
 
 3. User account deletion is unsupported
+
+4. Screenshot with svg format only, since converting svg to png with html-to-image got font problems
+
+   but svgs got larger size(~7mb by default), so for actual production use a random svg to png converter plz (ffmpeg cant do)
 
 **Project Path**
 
@@ -117,4 +123,4 @@ npm install multer
 
 `html-to-image` for converting webpage into screenshot
 
-`browser-image-compression` for compressing screenshot(63% compression ratio on average)
+[Deprecated] `browser-image-compression` for compressing screenshot(63% compression ratio on average)
