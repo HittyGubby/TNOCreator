@@ -191,14 +191,19 @@ function capture(ele,bkg,width,height) {
 
 async function capture(ele, bkg, width, height) {
   const svgData = await htmlToImage.toSvg(ele, {
-    //pixelRatio: Number(document.getElementById('screenshotscale').value),
-    width: width,height: height,backgroundColor: bkg,
-    filter: (node) => { return node.id !== 'sidebarbutton' && node.id !== 'sidebar'; }});
-    const a = document.createElement('a');
-    a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.svg`
-    a.href = svgData;
-    a.click();a.remove();
+    width: width,
+    height: height,
+    backgroundColor: bkg,
+    filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}});
+  const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(svgBlob);
+  const a = document.createElement('a');
+  a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.svg`;
+  a.href = url;
+  a.click();
+  URL.revokeObjectURL(url);
 }
+
 
 function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
   Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
@@ -290,8 +295,8 @@ function jsonupdate(jsonData){
   for (const e in jsonData.size){document.getElementById(e.replace("size","")).style.height = jsonData.size[e][1];}
   for (const e in jsonData.pri){document.getElementById(e.replace("pri","")).style.zIndex = jsonData.pri[e];}
   document.getElementById("main").style.zIndex = highestZIndex+100;
-  document.getElementById("sidebar").style.zIndex = highestZIndex+200;
-  document.getElementById("sidebarbutton").style.zIndex = highestZIndex+300;
+  document.getElementById("sidebar").style.zIndex = highestZIndex+300;
+  document.getElementById("sidebarbutton").style.zIndex = highestZIndex+500;
   document.body.style.backgroundColor = jsonData.background;
   document.getElementById('backgroundinput').value = jsonData.background
   for (const e in jsonData.show){
