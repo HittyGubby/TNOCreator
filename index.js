@@ -195,15 +195,17 @@ async function capture(ele, bkg, width, height) {
     height: height,
     backgroundColor: bkg,
     filter: (node) => {return node.id !== 'sidebarbutton' && node.id !== 'sidebar';}});
-  const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+  const svgContent = svgData.replace(/^data:image\/svg\+xml;charset=utf-8,/, '');
+  const decodedSvg = decodeURIComponent(svgContent);
+  const svgBlob = new Blob([decodedSvg], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(svgBlob);
   const a = document.createElement('a');
   a.download = `${new Date().toLocaleString("zh-CN")}${username === "" ? username : " - " + username}.svg`;
   a.href = url;
   a.click();
   URL.revokeObjectURL(url);
+  a.remove();
 }
-
 
 function wid(e){w=Number(window.getComputedStyle(document.getElementById(e)).left.replace("px",""))+
   Number(window.getComputedStyle(document.getElementById(e)).width.replace("px",""));if(isNaN(w)) return 0;else return w;}
