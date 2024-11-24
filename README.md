@@ -61,6 +61,7 @@ npm install path
 npm install crypto
 npm install cookie-parser
 npm install multer
+npm install fs
 ```
 
 3. Run server with default port 5500 `node index.mjs`
