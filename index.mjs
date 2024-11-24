@@ -5,6 +5,7 @@ import path from 'path';
 import crypto from 'crypto'
 import cookieParser from 'cookie-parser'
 import multer from 'multer';
+import fs from 'fs'
 const upload = multer({ storage: multer.memoryStorage() });
 const app = express();
 const port = 5500;
@@ -124,32 +125,22 @@ function setupDatabaseRoutesUser(dbs) {
                   app.get(`/api/user/${dbname}/:name`, (req, res) => {
                     const cookie = req.cookies.session;
                     const name = req.params.name;
-                    const folderPath = path.join(__dirname, 'upload', dbname); // Path to the folder for the table
-                  
-                    if (!fs.existsSync(folderPath)) {
-                      fs.mkdirSync(folderPath, { recursive: true })
-                    }
-                  
+                    const folderPath = path.join(path.resolve(), 'data/upload', dbname);
+                    if (!fs.existsSync(folderPath)) {fs.mkdirSync(folderPath, { recursive: true })}
                     if (cookie === undefined) {
-                      // For unauthenticated users
                       db.get(`SELECT shared FROM ${dbname} WHERE filename = ? AND shared = 'true'`, [name], (err, row) => {
                         if (err) return res.status(500).send('Error retrieving metadata');
                         if (row) {
                           const filePath = path.join(folderPath, name);
                           if (fs.existsSync(filePath)) {
                             res.setHeader('Content-Type', 'image/png');
-                            return res.sendFile(filePath);
-                          }
-                          return res.status(404).send('Image file not found');
-                        }
-                        res.status(404).send('Image not found');
-                      });
+                            return res.sendFile(filePath);}
+                          return res.status(404).send('Image file not found');}
+                        res.status(404).send('Image not found');});
                     } else {
-                      // For authenticated users
                       udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
                         if (err) return res.status(500).send('Error retrieving user');
                         if (!row) return res.status(401).send('Unauthorized');
-                  
                         const user = row.user;
                         db.get(
                           `SELECT shared FROM ${dbname} WHERE filename = ? AND ((user = ? AND shared = 'false') OR shared = 'true')`,
@@ -160,16 +151,9 @@ function setupDatabaseRoutesUser(dbs) {
                               const filePath = path.join(folderPath, name);
                               if (fs.existsSync(filePath)) {
                                 res.setHeader('Content-Type', 'image/png');
-                                return res.sendFile(filePath);
-                              }
-                              return res.status(404).send('Image file not found');
-                            }
-                            res.status(404).send('Image not found');
-                          }
-                        );
-                      });
-                    }
-                  });
+                                return res.sendFile(filePath);}
+                              return res.status(404).send('Image file not found');}
+                            res.status(404).send('Image not found');});});}});
 });}
 setupDatabaseRoutesUser(['flag', 'portrait', 'focus', 'econ', 'econsub', 'faction', 'ideology', 'header', 'super', 'news']);
 
@@ -181,23 +165,34 @@ app.post('/upload', upload.array('files'), (req, res) => {
   const files = req.files;
   const cookie = req.cookies.session;
   udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-    if (err) {return res.status(500).send('Error retrieving user');}
-    if (!row) {return res.status(401).send('Unauthorized');}
+    if (err) return res.status(500).send('Error retrieving user');
+    if (!row) return res.status(401).send('Unauthorized');
     if (row.user !== base64Decode(req.body.username)) {return res.status(401).send('Unauthorized');}
-    else {const insertFile = (file, callback) => {
-        db.run(`INSERT INTO ${req.headers['type']} (filename, time, ip, user, ua, data, shared) VALUES (?, ?, ?, ?, ?, ? ,?)`,
-          [file.originalname,d.toLocaleString("zh-CN"),req.ip,
-          base64Decode(req.body.username),req.headers['user-agent'],file.buffer,req.headers['shared']], callback);};
-      let completed = 0;
-      const errors = [];
-      files.forEach(file => {
-        insertFile(file, (err) => {if (err) {errors.push(err.message);}completed++;
+    const username = base64Decode(req.body.username);
+    const tableType = req.headers['type'];
+    const shared = req.headers['shared'];
+    const folderPath = path.join(path.resolve(), 'data/upload', tableType);
+    if (!fs.existsSync(folderPath)) {fs.mkdirSync(folderPath, { recursive: true });}
+    let completed = 0;
+    const errors = [];
+    const insertMetadata = (file, callback) => {
+      db.run(`INSERT INTO ${tableType} (filename, time, ip, user, ua, shared) VALUES (?, ?, ?, ?, ?, ?)`,
+        [file.originalname,d.toLocaleString('zh-CN'),req.ip,username,req.headers['user-agent'],shared,],callback);};
+    files.forEach((file) => {
+      const filePath = path.join(folderPath, file.originalname);
+      fs.writeFile(filePath, file.buffer, (err) => {
+        if (err) {
+          errors.push(`Error saving file: ${file.originalname} - ${err.message}`);
+          completed++;
           if (completed === files.length) {
-            if (errors.length > 0) {res.status(500).json({ error: errors });} 
-            else {res.status(200).json({ message: 'Files uploaded successfully' });}}});});}});});
-
-
-
+            return res.status(500).json({ error: errors });}} else {
+          insertMetadata(file, (err) => {
+            if (err) {errors.push(`Error inserting metadata: ${file.originalname} - ${err.message}`);}
+            completed++;
+            if (completed === files.length) {
+              if (errors.length > 0) {
+                res.status(500).json({ error: errors });} else 
+                {res.status(200).json({ message: 'Files uploaded successfully' });}}});}});});});});
 
 app.post('/assetdel', (req, res) => {
   const db = new sqlite3.Database(`data/upload.db`);

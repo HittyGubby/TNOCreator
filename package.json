@@ -15,6 +15,8 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.2.0",
     "multer": "^1.4.5-lts.1",
     "sqlite3": "^5.1.7"
   }
