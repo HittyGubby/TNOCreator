@@ -119,22 +119,58 @@ function setupDatabaseRoutesUser(dbs) {
                 db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND ((user = ? AND shared='false') OR shared = 'true')`, [`%${query}%`, user], (err, rows) => {
                   if (err) {return res.status(500).send('Error retrieving images');}
                   res.json(rows);});});}});
-          app.get(`/api/user/${dbname}/:name`, (req, res) => {
-            const cookie = req.cookies.session;
-            const name = req.params.name;
-            if (cookie === undefined) {
-              db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND shared = 'true'`, [name], (err, row) => {
-                if (err) {return res.status(500).send('Error retrieving image');}
-                if (row) {res.setHeader('Content-Type', 'image/png');res.send(row.data);} 
-                else {res.status(404).send('Image not found');}});} 
-                else {udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
-                if (err) {return res.status(500).send('Error retrieving user');}
-                if (!row) {return res.status(401).send('Unauthorized');}
-                const user = row.user;
-                db.get(`SELECT data FROM ${dbname} WHERE filename = ? AND ((user = ? AND shared='false') OR shared = 'true')`, [name, user], (err, row) => {
-                  if (err) {return res.status(500).send('Error retrieving image');}
-                  if (row) {res.setHeader('Content-Type', 'image/png');res.send(row.data);} 
-                  else {res.status(404).send('Image not found');}});});}});   });}
+
+
+                  app.get(`/api/user/${dbname}/:name`, (req, res) => {
+                    const cookie = req.cookies.session;
+                    const name = req.params.name;
+                    const folderPath = path.join(__dirname, 'upload', dbname); // Path to the folder for the table
+                  
+                    if (!fs.existsSync(folderPath)) {
+                      fs.mkdirSync(folderPath, { recursive: true })
+                    }
+                  
+                    if (cookie === undefined) {
+                      // For unauthenticated users
+                      db.get(`SELECT shared FROM ${dbname} WHERE filename = ? AND shared = 'true'`, [name], (err, row) => {
+                        if (err) return res.status(500).send('Error retrieving metadata');
+                        if (row) {
+                          const filePath = path.join(folderPath, name);
+                          if (fs.existsSync(filePath)) {
+                            res.setHeader('Content-Type', 'image/png');
+                            return res.sendFile(filePath);
+                          }
+                          return res.status(404).send('Image file not found');
+                        }
+                        res.status(404).send('Image not found');
+                      });
+                    } else {
+                      // For authenticated users
+                      udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+                        if (err) return res.status(500).send('Error retrieving user');
+                        if (!row) return res.status(401).send('Unauthorized');
+                  
+                        const user = row.user;
+                        db.get(
+                          `SELECT shared FROM ${dbname} WHERE filename = ? AND ((user = ? AND shared = 'false') OR shared = 'true')`,
+                          [name, user],
+                          (err, row) => {
+                            if (err) return res.status(500).send('Error retrieving metadata');
+                            if (row) {
+                              const filePath = path.join(folderPath, name);
+                              if (fs.existsSync(filePath)) {
+                                res.setHeader('Content-Type', 'image/png');
+                                return res.sendFile(filePath);
+                              }
+                              return res.status(404).send('Image file not found');
+                            }
+                            res.status(404).send('Image not found');
+                          }
+                        );
+                      });
+                    }
+                  });
+});}
 setupDatabaseRoutesUser(['flag', 'portrait', 'focus', 'econ', 'econsub', 'faction', 'ideology', 'header', 'super', 'news']);
 
 
