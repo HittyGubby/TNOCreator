@@ -462,6 +462,7 @@ function langchtoen(){
     lang="English";}
 
 var shared=false;
+var queryshared=false;
 function checkshare(){
   c=document.getElementById('checkboxshared')
     if (shared){
@@ -471,6 +472,17 @@ function checkshare(){
     else{
       c.style.background = "url(\"template/generic_checkbox_checked.png\") no-repeat";
       shared=true;
+      document.getElementById("sfxcheck").play();} 
+}
+function checkqueryshare(){
+  c=document.getElementById('checkboxqueryshared')
+    if (queryshared){
+      c.style.background = "url('template/generic_checkbox_unchecked.png') no-repeat";
+      queryshared=false;
+      document.getElementById("sfxcheck").play();}
+    else{
+      c.style.background = "url(\"template/generic_checkbox_checked.png\") no-repeat";
+      queryshared=true;
       document.getElementById("sfxcheck").play();} 
 }
 
@@ -535,7 +547,7 @@ function genpiccontainer(){
       const list=this.id.replace('userinput','');
       const query = this.value;
       if (!query) {document.getElementById(`autocompuser${list}`).innerHTML = '';return;}
-      fetch(`/api/user/${list}?q=${query}`)
+      fetch(`/api/user/${list}?q=${query}`,{headers:{'Content-Type':'multipart/form-data','charset':'UTF-8','queryshared':queryshared}})
           .then(response => response.json())
           .then(files => {
               const autocompleteList = document.getElementById(`autocompuser${list}`);

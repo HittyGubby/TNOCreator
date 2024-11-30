@@ -23,6 +23,11 @@ async function extractPicturesFromDB(dbPath, uploadFolder) {
                 if (data) {
                     const filePath = path.join(tableFolder, filename);
                     await fs.writeFile(filePath, Buffer.from(data, 'latin1'));
+                    db.run(`UPDATE ${tableName} SET data=NULL WHERE filename=?`, [filename], (err) => {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
                 }
             });
         }
