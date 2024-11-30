@@ -107,19 +107,27 @@ function setupDatabaseRoutesUser(dbs) {
     const udb = new sqlite3.Database(`data/user.db`);
     const db = new sqlite3.Database(`data/upload.db`);
     dbs.forEach(dbname => {
-        app.get(`/api/user/${dbname}`, (req, res) => {
-            const cookie = req.cookies.session;
-            const query = req.query.q || '';
-            if (cookie === undefined) {
-              db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND shared = 'true'`, [`%${query}%`], (err, rows) => {
-                if (err) {return res.status(500).send('Error retrieving images');}res.json(rows);});} 
-                else {udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
+      app.get(`/api/user/${dbname}`, (req, res) => {
+        const cookie = req.cookies.session;
+        const query = req.query.q || '';
+        const includeShared = req.headers['queryshared'] === 'true';
+        if (cookie === undefined) {
+            if (includeShared) {
+                db.all(`SELECT filename, user FROM ${dbname} WHERE filename LIKE ? AND shared = 'true'`, [`%${query}%`], (err, rows) => {
+                    if (err) {return res.status(500).send('Error retrieving images');}res.json(rows);});} else {res.json([]);}
+        } else {
+            udb.get(`SELECT user FROM auth WHERE cookie = ?`, [cookie], (err, row) => {
                 if (err) {return res.status(500).send('Error retrieving user');}
                 if (!row) {return res.status(401).send('Unauthorized');}
                 const user = row.user;
-                db.all(`SELECT filename,user FROM ${dbname} WHERE filename LIKE ? AND ((user = ? AND shared='false') OR shared = 'true')`, [`%${query}%`, user], (err, rows) => {
-                  if (err) {return res.status(500).send('Error retrieving images');}
-                  res.json(rows);});});}});
+                if (includeShared) {
+                    db.all(`SELECT filename, user FROM ${dbname} WHERE filename LIKE ? AND ((user = ? AND shared = 'false') OR shared = 'true')`,
+                        [`%${query}%`, user],
+                        (err, rows) => {if (err) {return res.status(500).send('Error retrieving images');}res.json(rows);});
+                } else {
+                    db.all(`SELECT filename, user FROM ${dbname} WHERE filename LIKE ? AND user = ?`,[`%${query}%`, user],
+                        (err, rows) => {if (err) {return res.status(500).send('Error retrieving images');}res.json(rows);});}});}});
+    
 
 
                   app.get(`/api/user/${dbname}/:name`, (req, res) => {
@@ -176,7 +184,7 @@ app.post('/upload', upload.array('files'), (req, res) => {
     let completed = 0;
     const errors = [];
     const insertMetadata = (file, callback) => {
-      db.run(`INSERT INTO ${tableType} (filename, time, ip, user, ua, shared) VALUES (?, ?, ?, ?, ?, ?)`,
+      db.run(`INSERT OR IGNORE INTO ${tableType} (filename, time, ip, user, ua, shared) VALUES (?, ?, ?, ?, ?, ?)`,
         [file.originalname,d.toLocaleString('zh-CN'),req.ip,username,req.headers['user-agent'],shared,],callback);};
     files.forEach((file) => {
       const filePath = path.join(folderPath, file.originalname);
