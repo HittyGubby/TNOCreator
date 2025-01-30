@@ -4,9 +4,10 @@ window.onload = function(){
   
     //sync texts    
     document.getElementById("progressbar").style.width=Math.round(Math.random()*237)+"px";
-    document.getElementById("leaderdesc").innerHTML = document.getElementById("leader").innerHTML;
-    document.getElementById("countrydesc").innerHTML = document.getElementById("country").innerHTML;
-    document.getElementById("descflag").src = document.getElementById("flagpic").src;
+    //document.getElementById("leaderdesc").innerHTML = document.getElementById("leader").innerHTML;
+    //document.getElementById("countrydesc").innerHTML = document.getElementById("country").innerHTML;
+    //document.getElementById("descflag").src = document.getElementById("flagpic").src;
+    
    
     //add attribs
     updateattrib(document.getElementById('poplist'), 'input', {'min':'0','type': 'number','oninput': 'updatepop()','placeholder': '任意正数'});
@@ -28,7 +29,8 @@ window.onload = function(){
     document.querySelectorAll('.queryinput').forEach(input => {input.value = document.getElementById(input.id.replace("input","pic")).src.replace(document.location.origin,'').replace('/preset/','')
       //.split(/[/ ]+/).pop().replace(/_/g," ").replace(".png","");
     });
-    
+    update(document.getElementById("detaildescinput"));
+
     document.getElementById('uploadJson').addEventListener('click', () => {document.getElementById('fileInput').click();});
     document.getElementById('fileInput').addEventListener('change', (event) => uploadjson(event));
     document.getElementById('filenameinput').value = `${new Date().toLocaleString("zh-CN")}${username==="" ? username : " - "+username}`
@@ -401,11 +403,30 @@ function updatepop() {
       rgb(155, 0, 0) 0 ${scaledAngles[11]}deg,rgb(110, 0, 0) 0 ${scaledAngles[12]}deg)`;
 }
 
-function update(input){
-  document.getElementById(input.id.replace("input","")).innerHTML = input.value;
-  document.getElementById("leaderdesc").innerHTML = document.getElementById("leader").innerHTML;
-  document.getElementById("countrydesc").innerHTML = document.getElementById("country").innerHTML;
+function update(input) {
+  document.getElementById(input.id.replace("input", "")).innerHTML = input.value
+      .replace(/{leader}/g, `<span class="leaderdesc" style="color:#cccc00"></span>`)
+      .replace(/{country}/g, `<span class="countrydesc" style="color:#cccc00"></span>`)
+      .replace(/{flag}/g, `<div style="margin: 0px 0px 0px 9px; position:absolute; z-index: 3; display: inline; justify-content: center; align-items: center; height: 13px; width: 20px;"><img class="descflag" style="left: 0px; margin: 0 -10px; height: inherit; width: inherit;"></div>`);
+
+  requestAnimationFrame(() => {
+      let flagSrc = document.getElementById("flagpic").src;
+      document.querySelectorAll(".descflag").forEach(flag => {
+          flag.src = flagSrc;
+      });
+
+      let leaderText = document.getElementById("leader").innerHTML;
+      document.querySelectorAll(".leaderdesc").forEach(desc => {
+          desc.innerHTML = leaderText;
+      });
+
+      let countryText = document.getElementById("country").innerHTML;
+      document.querySelectorAll(".countrydesc").forEach(desc => {
+          desc.innerHTML = countryText;
+      });
+  });
 }
+
 
 let highestZIndex = 10;
 function dragElement(elmnt) {
@@ -448,15 +469,15 @@ function langchange(){
 }
 function langchtocn(){
     document.getElementById("lang").innerHTML = "中文";
-    document.getElementById("leaderofen").style.display = "none";
-    document.getElementById("leaderofcn").style.display = "";
+    //document.getElementById("leaderofen").style.display = "none";
+    //document.getElementById("leaderofcn").style.display = "";
     document.getElementById("economyen").style.display = "none";
     document.getElementById("economycn").style.display = "";
     lang="中文";}
 function langchtoen(){
     document.getElementById("lang").innerHTML = "English";
-    document.getElementById("leaderofen").style.display = "";
-    document.getElementById("leaderofcn").style.display = "none";
+    //document.getElementById("leaderofen").style.display = "";
+    //document.getElementById("leaderofcn").style.display = "none";
     document.getElementById("economyen").style.display = "";
     document.getElementById("economycn").style.display = "none";
     lang="English";}
@@ -519,7 +540,12 @@ function genpiccontainer(){
                       //.replace(/_/g," ").replace(".png","");
                       document.getElementById(`${list}pic`).src = `/api/${list}/${file.name}`;
                       autocompleteList.innerHTML = '';
-                      document.getElementById("descflag").src=document.getElementById("flagpic").src;});
+                      //document.getElementById("descflag").src=document.getElementById("flagpic").src;
+                      let flagSrc = document.getElementById("flagpic").src;
+                      document.querySelectorAll(".descflag").forEach(flag => {
+                          flag.src = flagSrc;
+                      });
+                    });
                   item.style.borderBottom = '1px solid #333333';
                   autocompleteList.appendChild(item);});})
           .catch(error => console.error('Error fetching files:', error));});
@@ -561,7 +587,11 @@ function genpiccontainer(){
                       document.getElementById(`${list}userinput`).value = file.filename;
                       document.getElementById(`${list}pic`).src = `/api/user/${list}/${file.filename}`;
                       autocompleteList.innerHTML = '';
-                      document.getElementById("descflag").src=document.getElementById("flagpic").src;});
+                      //document.getElementById("descflag").src=document.getElementById("flagpic").src;
+                      let flagSrc = document.getElementById("flagpic").src;
+                      document.querySelectorAll(".descflag").forEach(flag => {
+                          flag.src = flagSrc;});
+                    });
                   item.style.borderBottom = '1px solid #333333';
                   if(file.user==username){
                   const del = document.createElement('button');
