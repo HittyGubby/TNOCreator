@@ -43,6 +43,7 @@ window.onload = function(){
       document.getElementById('loginButton').style.display = 'none';
       document.getElementById('logoutButton').style.display = 'inline-block';
       autoLogin()}
+    username = sessionStorage.getItem('username');
 }
 // main end
 
@@ -53,6 +54,7 @@ async function autoLogin() {
   const data = await response.json();
   if (data.success) {
       username = data.user;
+      sessionStorage.setItem('username', username);
       document.querySelectorAll('.uploadbutton').forEach(b => {
         b.onclick=function(){uploadasset(this)};})
       loadPresets(data.user);
@@ -79,6 +81,7 @@ async function login(){
   if (data.success) {
       document.cookie = `session=${data.cookie}; path=/`;
       username = user;
+      sessionStorage.setItem('username', username);
       loadPresets(user);
       document.getElementById('username').value = '';
       document.getElementById('password').value = '';
@@ -118,6 +121,7 @@ async function login(){
 function logout(){
   document.cookie = "session= ; expires = Thu, 01 Jan 1970 00:00:00 GMT"
     username = '';
+    sessionStorage.removeItem('username');
     document.getElementById('presetList').innerHTML = '';
     document.getElementById('username').value = '';
   document.getElementById('password').value = '';
