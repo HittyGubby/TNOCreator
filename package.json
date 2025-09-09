@@ -1,23 +1,39 @@
 {
-  "name": "tnocreator-web",
-  "version": "1.0.0",
-  "description": "*PLANNED TNO customized showcase generator..? By a total frontend noob(",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "name": "1",
+  "version": "0.0.0",
+  "private": true,
   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write src/"
+  },
   "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "express": "^4.19.2",
-    "fs": "^0.0.1-security",
-    "fs-extra": "^11.2.0",
-    "multer": "^1.4.5-lts.1",
-    "sqlite3": "^5.1.7"
+    "@primeuix/themes": "^1.0.1",
+    "@primevue/themes": "^4.3.3",
+    "@vueuse/core": "^13.1.0",
+    "@vueuse/motion": "^3.0.3",
+    "browser-image-compression": "^2.0.2",
+    "chart.js": "^4.4.8",
+    "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
+    "live-server": "^1.2.0",
+    "pinia": "^3.0.1",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.3",
+    "save-svg-as-png": "^1.4.17",
+    "tailwindcss": "^4.1.3",
+    "vue": "^3.5.13",
+    "vue-chartjs": "^5.3.2",
+    "vue-draggable-next": "^2.2.1",
+    "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "prettier": "3.5.3",
+    "vite": "^6.2.4",
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vue-draggable-resizable": "^3.0.0"
   }
 }
