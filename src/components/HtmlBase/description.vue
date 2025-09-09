@@ -1,7 +1,20 @@
 <template>
-  <div class=" draggable resizable text" id="desc"
-    style="font-family:Aldrich, FZRui; font-size: 13px; z-index: 4; line-height: 16px;background-color: #000c13; z-index: 3;border: 1px solid transparent;border-color: #7caaaa;border-image-slice: 1; padding: 7px;min-height:min-content; color: #c2ac89; white-space: pre-line;">
-    <span style="color: #cccc00;">国会紧急委员会</span>
+  <div class="draggable resizable text" id="desc" style="
+      font-family: Aldrich, FZRui;
+      font-size: 13px;
+      z-index: 4;
+      line-height: 16px;
+      background-color: #000c13;
+      z-index: 3;
+      border: 1px solid transparent;
+      border-color: #7caaaa;
+      border-image-slice: 1;
+      padding: 7px;
+      min-height: min-content;
+      color: #c2ac89;
+      white-space: pre-line;
+    ">
+    <span style="color: #cccc00">国会紧急委员会</span>
     <br>
     -----------
     <br>

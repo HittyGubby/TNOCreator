@@ -1,59 +1,38 @@
 <template>
-
   <div class="control-panel-container">
-
     <div class="right-panel">
       <div class="window-controls">
         <h3>窗口控制</h3>
         <div class="windowtoggle">
-          <div v-for="window in windows" :key="window.id" class="toggle-item">
+          <div v-for="window in windows" :key="window.name" class="toggle-item">
             <span>{{ window.name }}</span>
-            <ToggleSwitch v-model="window.visible" @click="toggleWindowVisibility(window)" />
+            <ToggleSwitch v-model="window.visible" />
           </div>
         </div>
         <div class="toggle-item">
           <span>窗口是否可拖拽</span>
-          <ToggleSwitch v-model="draggable" />
+          <ToggleSwitch :model-value="draggable" @update:model-value="$emit('update:draggable', $event)" />
         </div>
         <div class="toggle-item">
           <span>背景色：</span>
           <InputText type="color" v-model="backgroundColor" @input="updateBackground"
-            style="height: 40px; width: 100px;" />
+            style="height: 40px; width: 100px" />
         </div>
         <div class="toggle-item">
           <Button label="截图" @click="capture" />
           <Button label="清除缓存" @click="clearSessionStorage" severity="danger" />
         </div>
       </div>
-      <!--
-      <div class="priority-management">
-        <h3>窗口优先级管理</h3>
-        <DataTable :value="windows" :scrollable="true" scrollHeight="150px" class="p-datatable-sm">
-          <Column field="name" header="窗口名称"></Column>
-          <Column header="操作">
-            <template #body="slotProps">
-              <Button label="提升优先级" @click="increaseZIndex(slotProps.data.id)" />
-            </template>
-</Column>
-</DataTable>
-</div>-->
     </div>
+    <Divider layout="vertical"></Divider>
     <div class="left-panel">
       <div class="preset-management">
         <h3>预设管理</h3>
-        <div class="search-container">
-          <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText v-model="searchQuery" placeholder="搜索预设..." class="search-input" />
-          </span>
-        </div>
         <div class="table-container">
-          <DataTable v-model:selection="selectedPresets" :value="filteredPresets" :scrollable="true"
-            scrollHeight="300px" class="p-datatable-sm" :rowClass="rowClass" @row-click="onPresetRowClick"
-            :reorderableRows="!searchQuery" @rowReorder="onRowReorder" :paginator="true" :rows="5"
+          <DataTable v-model:selection="selectedPresets" :value="presets" :scrollable="true" scrollHeight="300px"
+            class="p-datatable-sm" :rowClass="rowClass" @row-click="onPresetRowClick" :paginator="true" :rows="5"
             :rowsPerPageOptions="[5, 10, 20]">
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-            <Column rowReorder style="width: 3rem" :reorderable="!searchQuery"></Column>
             <Column field="name" header="预设名称"></Column>
             <Column field="saveTime" header="保存时间">
               <template #body="slotProps">
@@ -67,6 +46,9 @@
               :disabled="!selectedPresets || selectedPresets.length !== 1" />
             <Button icon="pi pi-trash" label="删除" @click="deletePresetv"
               :disabled="!selectedPresets || selectedPresets.length === 0" severity="danger" />
+            <FileUpload mode="basic" chooseLabel="⠀导入⠀" :auto="true" :customUpload="true" @uploader="importPresets"
+              :multiple="true" accept=".json" class="full-width-upload" />
+            <Button icon="pi pi-download" label="导出" @click="exportPresets" />
           </div>
         </div>
       </div>
@@ -89,102 +71,95 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import ToggleSwitch from 'primevue/toggleswitch';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import { useWindows } from '@/composables/useWindows';
-import { usePresetDB } from '@/composables/usePresetDB';
-import { formatDate } from '@/utils/format';
-import { GetData, SetData } from '@/components/index.vue';
+import { ref, onMounted } from "vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import ToggleSwitch from "primevue/toggleswitch";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import FileUpload from 'primevue/fileupload';
+import { usePresetDB } from "@/composables/usePresetDB";
+import { formatDate } from "@/utils/format";
+import { GetData, SetData } from "@/utils/utilities";
+import moment from "moment";
 
-const { windows, draggable } = useWindows();
+defineProps({
+  windows: Object,
+  draggable: Boolean,
+});
+
+defineEmits(['update:draggable']);
+
 const { getAllPresets, addPreset, deletePreset, updatePreset } = usePresetDB();
 
-const backgroundColor = ref('#0b0012');
-const searchQuery = ref('');
+const backgroundColor = ref("#0b0012");
 const presets = ref([]);
 const selectedPresets = ref(null);
 const renameDialogVisible = ref(false);
-const newPresetName = ref('');
-let zIndexCounter = 1000;
+const newPresetName = ref("");
 
 const updateBackground = () => {
   document.body.style.backgroundColor = backgroundColor.value;
 };
 
-const toggleWindowVisibility = (window) => {
-  window.visible = !window.visible;
-  const element = document.getElementById(window.id);
-  element.style.display = window.visible ? '' : 'none';
-};
-
 const clearSessionStorage = () => {
-  if (window.confirm('是否清除缓存？')) {
+  if (window.confirm("是否清除缓存？")) {
     sessionStorage.clear();
-    alert('缓存已清除');
+    alert("缓存已清除");
     location.reload();
   }
 };
 
 async function capture() {
   try {
-    document.getElementById('control-panel').style.display = 'none';
+    document.getElementById("control-panel").style.display = "none";
     setTimeout(async function () {
-      alert('只能截取当前窗口的内容，请点击“确定”后选择要截取的窗口。\n手机端大概率无法使用此功能。');
-      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      alert(
+        "只能截取当前窗口的内容，请点击“确定”后选择要截取的窗口。\n手机端大概率无法使用此功能。",
+      );
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
       const track = stream.getVideoTracks()[0];
       const bitmap = await new ImageCapture(track).grabFrame();
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
-      canvas.getContext('2d').drawImage(bitmap, 0, 0);
-      canvas.toBlob(blob => {
+      canvas.getContext("2d").drawImage(bitmap, 0, 0);
+      canvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `${new Date().toLocaleString("zh-CN")}.png`;
         a.click();
         URL.revokeObjectURL(url);
         track.stop();
-        document.getElementById('control-panel').style.display = '';
-      }, 'image/png');
+        document.getElementById("control-panel").style.display = "";
+      }, "image/png");
     }, 500);
   } catch (err) {
-    console.log(err);
-    document.getElementById('control-panel').style.display = '';
+    document.getElementById("control-panel").style.display = "";
   }
 }
 
-const filteredPresets = computed(() => {
-  if (!searchQuery.value) return presets.value;
-  const keywords = searchQuery.value.toLowerCase().split(' ');
-  return presets.value.filter(preset =>
-    keywords.every(keyword => preset.name.toLowerCase().includes(keyword))
-  );
-});
-
 const savePreset = async () => {
-  const presetName = prompt('请输入预设名称:');
+  const presetName = prompt("请输入预设名称:");
   if (!presetName) return;
 
   const presetData = {
     name: presetName,
     data: GetData(),
-    saveTime: new Date()
+    saveTime: new Date(),
   };
   const id = await addPreset(presetData);
   presets.value.push({ id, ...presetData });
 };
 
 const loadPreset = async (presetId) => {
-  const preset = presets.value.find(p => p.id === presetId);
+  const preset = presets.value.find((p) => p.id === presetId);
   if (preset) {
     SetData(preset.data);
-    alert('注意：预设功能尚施工中，现只能加载文字');
   }
 };
 
@@ -197,11 +172,11 @@ const renamePreset = async () => {
   const preset = selectedPresets.value[0];
   preset.name = newPresetName.value;
   await updatePreset(preset);
-  presets.value = presets.value.map(p =>
-    p.id === preset.id ? { ...p, name: newPresetName.value } : p
+  presets.value = presets.value.map((p) =>
+    p.id === preset.id ? { ...p, name: newPresetName.value } : p,
   );
   renameDialogVisible.value = false;
-  newPresetName.value = '';
+  newPresetName.value = "";
 };
 
 const deletePresetv = async () => {
@@ -209,22 +184,62 @@ const deletePresetv = async () => {
   for (const preset of selectedPresets.value) {
     await deletePreset(preset.id);
   }
-  presets.value = presets.value.filter(p => !selectedPresets.value.some(sp => sp.id === p.id));
+  presets.value = presets.value.filter(
+    (p) => !selectedPresets.value.some((sp) => sp.id === p.id),
+  );
   selectedPresets.value = null;
-};
-
-const increaseZIndex = (windowId) => {
-  const element = document.getElementById(windowId);
-  if (element) {
-    zIndexCounter++;
-    element.style.zIndex = zIndexCounter;
-  }
 };
 
 const showRenameDialog = () => {
   if (selectedPresets.value && selectedPresets.value.length === 1) {
     newPresetName.value = selectedPresets.value[0].name;
     renameDialogVisible.value = true;
+  }
+};
+
+const exportPresets = () => {
+  if (selectedPresets.value && selectedPresets.value.length > 0) {
+    selectedPresets.value.forEach(preset => {
+      const blob = new Blob([JSON.stringify(preset)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${preset.name}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  } else {
+    const currentData = GetData();
+    const blob = new Blob([JSON.stringify({ name: moment().format('YYYY/MM/DD_HH:mm:ss'), data: currentData, saveTime: new Date() }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = moment().format('YYYY/MM/DD_HH:mm:ss') + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+};
+
+const importPresets = async (event) => {
+  const files = event.files;
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const preset = JSON.parse(e.target.result);
+        // Ensure preset has a name, data and saveTime
+        if (preset.name && preset.data && preset.saveTime) {
+          delete preset.id;
+          const id = await addPreset(preset);
+          presets.value.push({ id, ...preset });
+        } else {
+          alert(`文件 ${file.name} 格式不正确，已跳过。`);
+        }
+      } catch (error) {
+        alert(`导入文件 ${file.name} 时出错: ${error.message}`);
+      }
+    };
+    reader.readAsText(file);
   }
 };
 
@@ -242,17 +257,11 @@ onMounted(async () => {
 
 .control-panel-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1rem;
+  width: 100%;
 }
 
-.left-panel,
-.right-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
 .preset-management,
 .window-controls,
