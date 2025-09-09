@@ -16,7 +16,7 @@
 }
 @font-face {
   font-family: OldTypeNr;
-  src: url(/fonts/OldTypeNr.ttf) format("truetype");
+  src: url(/fonts/OldTyperNr.ttf) format("truetype");
 }
 
 label {
@@ -25,4 +25,9 @@ label {
   font-size: 16px;
   width: 25px;
   height: 25px;
+  user-select: none;
+}
+
+*{
+  cursor: url(/template/embark.png), auto;
 }

@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 const DB_NAME = "CreativeTFR";
 const STORE_NAME = "customPics";
-const DB_VERSION = 1;
+const DB_VERSION = 1; // Increment to create the presets store
 
 export function useIndexedDB() {
   const db = ref(null);
@@ -29,13 +29,24 @@ export function useIndexedDB() {
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          const store = db.createObjectStore(STORE_NAME, {
+
+        // Create customPics store if it doesn't exist
+        if (!db.objectStoreNames.contains("customPics")) {
+          const picsStore = db.createObjectStore("customPics", {
             keyPath: "id",
             autoIncrement: true,
           });
-          store.createIndex("type", "type", { unique: false });
-          store.createIndex("filename", "filename", { unique: false });
+          picsStore.createIndex("type", "type", { unique: false });
+          picsStore.createIndex("filename", "filename", { unique: false });
+        }
+
+        // Create presets store if it doesn't exist
+        if (!db.objectStoreNames.contains("presets")) {
+          const presetsStore = db.createObjectStore("presets", {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+          presetsStore.createIndex("name", "name", { unique: false });
         }
       };
     });
