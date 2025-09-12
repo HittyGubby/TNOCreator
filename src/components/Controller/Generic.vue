@@ -59,8 +59,8 @@
     :style="{ width: '400px', fontFamily: 'Aldrich, FZRui' }">
     <div class="rename-container">
       <span class="p-float-label">
-        <InputText v-model="newPresetName" class="w-full" />
         <label>新预设名称</label>
+        <InputText v-model="newPresetName" class="w-full" />
       </span>
     </div>
     <template #footer>
@@ -104,43 +104,14 @@ const updateBackground = () => {
 };
 
 const clearSessionStorage = () => {
-  if (window.confirm("是否清除缓存？")) {
-    sessionStorage.clear();
-    alert("缓存已清除");
+  if (window.confirm("是否清除自动保存的内容？存储的图片和预设不受影响\n当出现诡异bug的时候可以碰碰运气")) {
+    localStorage.clear();
     location.reload();
   }
 };
 
-async function capture() {
-  try {
-    document.getElementById("control-panel").style.display = "none";
-    setTimeout(async function () {
-      alert(
-        "只能截取当前窗口的内容，请点击“确定”后选择要截取的窗口。\n手机端大概率无法使用此功能。",
-      );
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-      });
-      const track = stream.getVideoTracks()[0];
-      const bitmap = await new ImageCapture(track).grabFrame();
-      const canvas = document.createElement("canvas");
-      canvas.width = bitmap.width;
-      canvas.height = bitmap.height;
-      canvas.getContext("2d").drawImage(bitmap, 0, 0);
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${new Date().toLocaleString("zh-CN")}.png`;
-        a.click();
-        URL.revokeObjectURL(url);
-        track.stop();
-        document.getElementById("control-panel").style.display = "";
-      }, "image/png");
-    }, 500);
-  } catch (err) {
-    document.getElementById("control-panel").style.display = "";
-  }
+function capture() {
+  alert("其实不是我不想做，而是现有的浏览器截图技术真不够\n\n之前试过用保存HTML元素的方法，结果出来的图片肥肠诡异，而且没有饼图\n后来用了浏览器的截图API，发现只能截取浏览器窗口内的部分，而且手机端不支持\n\n我是飞舞，写不出来能两全其美的方法，所以还是缩放页面截图吧（记得用个大点的分辨率）\n\n2025/09/12 17:06:58 - 在被这个功能折磨一小时无果后有感而发")
 }
 
 const savePreset = async () => {

@@ -11,7 +11,7 @@
 
 3. 编译：`npm run build`
 
-4. 下载TFR素材[数据库](http://997779.xyz/share/TNOdata.zip) **(883.1MB)**
+4. 下载TFR素材[数据库](http://997779.xyz/share/TNOdata.zip) **(解压后735.5MB)**
 
 5. 将其解压到dist/data文件夹
 
@@ -36,7 +36,7 @@
 
 3. compile `npm run build`
 
-4. download TFR [Database](http://997779.xyz/share/TNOdata.zip) **(883.1MB)**
+4. download TFR [Database](http://997779.xyz/share/TNOdata.zip) **(735.5MB after inflating)**
 
 5. decompress to dist/data
 
