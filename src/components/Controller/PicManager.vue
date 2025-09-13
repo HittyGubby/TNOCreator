@@ -79,8 +79,8 @@
                                 </Column>
                             </DataTable>
                             <div class="action-buttons">
-                                <FileUpload mode="basic" :auto="true" accept="image/*" :maxFileSize="10000000"
-                                    @select="onFileSelect" :chooseLabel="'上传图片'" multiple="multiple" />
+                                <FileUpload mode="basic" :auto="true" accept="image/*" @select="onFileSelect"
+                                    :chooseLabel="'上传图片'" multiple="multiple" />
                                 <Button icon="pi pi-pencil" label="重命名" @click="showRenameDialog" :disabled="!selectedCustomPic || selectedCustomPic.length !== 1
                                     " size="small" />
                                 <Button icon="pi pi-trash" label="删除" @click="removePic" :disabled="!selectedCustomPic || selectedCustomPic.length === 0
@@ -106,18 +106,6 @@
             <Button label="取消" icon="pi pi-times" @click="renameDialogVisible = false" class="p-button-text"
                 size="small" />
             <Button label="确定" icon="pi pi-check" @click="renamePic" :disabled="!newFilename" size="small" />
-        </template>
-    </Dialog>
-    <Dialog v-model:visible="persistentStorageDialogVisible" header="持久化存储提醒" :modal="true"
-        :style="{ width: '500px', fontFamily: 'Aldrich, FZRui' }">
-        <div class="persistent-storage-warning">
-            <p>检测到您的浏览器未启用持久化存储，上传的图片可能会在浏览器清理缓存时丢失。</p>
-            <p>建议您点击下方按钮启用持久化存储以确保图片安全。</p>
-        </div>
-        <template #footer>
-            <Button label="取消" icon="pi pi-times" @click="persistentStorageDialogVisible = false" class="p-button-text"
-                size="small" />
-            <Button label="启用持久化存储" icon="pi pi-check" @click="requestPersistentStorage" size="small" />
         </template>
     </Dialog>
 </template>
@@ -169,33 +157,12 @@ const selectedVanillaPic = ref(null);
 const selectedCustomPic = ref(null);
 const uploadDialogVisible = ref(false);
 const renameDialogVisible = ref(false);
-const persistentStorageDialogVisible = ref(false);
 const newFilename = ref("");
 const vanillaPics = ref([]);
 const customPics = ref([]);
 const pictureScale = ref(1);
 const scaleInput = ref("1.0");
 
-// Check if persistent storage is available and enabled
-const checkPersistentStorage = async () => {
-    if (navigator.storage && navigator.storage.persist) {
-        const isPersisted = await navigator.storage.persisted();
-        return isPersisted;
-    }
-    return false;
-};
-
-// Request persistent storage
-const requestPersistentStorage = async () => {
-    if (navigator.storage && navigator.storage.persist) {
-        const isPersisted = await navigator.storage.persist();
-        if (isPersisted) {
-            persistentStorageDialogVisible.value = false;
-        } else {
-            alert("无法获取持久化存储权限，图片可能会在浏览器清理缓存时丢失。");
-        }
-    }
-};
 
 const loadVanillaPics = async () => {
     if (!props.type) return;
@@ -266,13 +233,6 @@ const showRenameDialog = () => {
 const onFileSelect = async (event) => {
     const files = event.files;
     if (!files || files.length === 0) return;
-
-    // Check persistent storage before uploading
-    const isPersistent = await checkPersistentStorage();
-    if (!isPersistent) {
-        persistentStorageDialogVisible.value = true;
-        return;
-    }
 
     const uploadPromises = Array.from(files).map((file) => {
         return new Promise((resolve, reject) => {

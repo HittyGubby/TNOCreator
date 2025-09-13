@@ -12,7 +12,7 @@ export function Edittext(el) {
   el.parentNode.insertBefore(editable, el);
   editable.focus();
   editable.addEventListener("input", () => {
-    if (editable.innerHTML.trim()) {
+    if (editable.textContent.trim()) {
       el.innerHTML = editable.textContent;
       // el.innerHTML = el.innerHTML.replace('[[country]]', `<span style='color:yellow'>${document.getElementById('country').textContent}</span>`)
       //   .replace('[[leader]]', `<span style='color:yellow'>${document.getElementById('leader').textContent}</span>`)
