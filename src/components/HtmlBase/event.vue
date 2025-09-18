@@ -91,7 +91,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="draggable" id="newswindow" style="position: absolute; z-index: 4">
+    <div class="draggable" id="eventwindow" style="position: absolute; z-index: 4">
         <img src="/template/news/event_report_top_win.png" style="position: relative; display: block;" />
 
         <img v-for="index in tileIndices" :key="index" src="/template/news/event_report_tileable_midsection.png"
@@ -113,7 +113,7 @@ onMounted(() => {
                 :style="{ position: 'absolute', scale: 1 }" data-target-id="eventpic" />
         </div>
 
-        <button id="newsbutton" class="button text" :style="{
+        <button id="eventbutton" class="button text" :style="{
             position: 'absolute',
             top: `${200 + tileCount * tileHeight}px`,
             left: '210px',
