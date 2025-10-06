@@ -70,7 +70,7 @@ const handleEditFinish = (event) => {
 
 onMounted(() => {
     document.addEventListener("click", handlePicClick);
-    const windowElement = document.getElementById("economywindow");
+    const windowElement = document.getElementById("eventwindow");
     windowElement.addEventListener("mousedown", prioritizeWindow);
 
     document.addEventListener("blur", handleEditFinish, true);
