@@ -271,7 +271,8 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <Dialog v-model:visible="editorVisible" header="饼图编辑" :style="{ width: '600px', fontFamily: 'Aldrich, FZRui' }">
+  <Dialog v-model:visible="editorVisible" header="饼图编辑"
+    :style="{ width: '600px', fontFamily: 'Aldrich, FZRui', opacity: 0.9 }">
     <ChartEditor v-model="state.chartData" />
   </Dialog>
   <PicManager v-model:visible="picManagerVisible" :type="picManagerType" :targetId="picManagerTargetId"
