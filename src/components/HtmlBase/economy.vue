@@ -48,7 +48,7 @@ onMounted(() => {
         <div style="
           position: absolute;
           top: 35px;
-          left: 190px;
+          left: 145px;
           z-index: 3;
           display: flex;
           justify-content: center;
@@ -57,6 +57,19 @@ onMounted(() => {
             <img id="econpic" class="pic" src="/preset/Gelenkte_Wirtschaft.png" data-modifiable="true" data-type="econ"
                 data-resizable="true" data-initial-scale="1" :style="{ position: 'absolute', scale: 1 }"
                 data-target-id="econpic" />
+        </div>
+        <div style="
+          position: absolute;
+          top: 35px;
+          left: 210px;
+          z-index: 3;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        ">
+            <img id="econfactionpic" class="pic" src="/preset/EHP_GER.png" data-modifiable="true"
+                data-type="econfaction" data-resizable="true" data-initial-scale="1"
+                :style="{ position: 'absolute', scale: 1 }" data-target-id="econfactionpic" />
         </div>
         <div style="
           z-index: 3;
