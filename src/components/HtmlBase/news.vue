@@ -11,7 +11,7 @@ let zIndexCounter = 10;
 const handlePicClick = (event) => {
   const distance = Math.sqrt(
     Math.pow(mousePosition.up.x - mousePosition.down.x, 2) +
-      Math.pow(mousePosition.up.y - mousePosition.down.y, 2)
+    Math.pow(mousePosition.up.y - mousePosition.down.y, 2)
   );
 
   if (distance > 5) {
@@ -111,7 +111,7 @@ onMounted(() => {
         color: #000000;
         inline-size: 300px;
         text-align: left;
-        font-size: 15px;
+        font-size: 14px;
         white-space: pre-line;
       ">在阿道夫·希特勒去世后，德国旋即陷入混乱。尽管元首指定了合法的继任者，但德国国内的强大派系已经开始拿起武器，互相对抗，打算将国家引导向自己的期望。国家已被分裂，整支整支的驻军无视来自日耳曼尼亚的命令，并倒向他们选择的继任者。虽然局势的严重程度尚不清楚，但据估计，德国要么正在面临要么已经经历了中央权威的彻底崩溃。<br /><br />
       虽然还不大清楚德国东部领地的命运将会如何，但日耳曼尼亚与她的殖民领之间突然断绝了联系，这已经引发了这些地区是否也会自行寻找出路的猜测。然而，有一点毫无疑问，这个欧洲巨人的崩溃已经使整个欧陆陷入分崩离析之中。</span>
