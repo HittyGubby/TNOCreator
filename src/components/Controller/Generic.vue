@@ -20,7 +20,7 @@
         </div>
         <div class="toggle-item">
           <Button label="截图" @click="capture" />
-          <Button label="清除缓存" @click="clearSessionStorage" severity="danger" />
+          <Button label="清除缓存" @click="clearLocalStorage" severity="danger" />
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
         <div class="table-container">
           <DataTable v-model:selection="selectedPresets" :value="presets" :scrollable="true" scrollHeight="300px"
             class="p-datatable-sm" :rowClass="rowClass" @row-click="onPresetRowClick" :paginator="true" :rows="5"
-            :rowsPerPageOptions="[5, 10, 20]">
+            :rowsPerPageOptions="[5, 10, 20]" rowHover>
             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
             <Column field="name" header="预设名称"></Column>
             <Column field="saveTime" header="保存时间">
@@ -82,7 +82,9 @@ import FileUpload from 'primevue/fileupload';
 import { usePresetDB } from "@/composables/usePresetDB";
 import { formatDate } from "@/utils/format";
 import { GetData, SetData } from "@/utils/utilities";
-import moment from "moment";
+import JSZip from 'jszip'
+import moment from 'moment'
+import { saveAs } from 'file-saver'
 
 defineProps({
   windows: Object,
@@ -103,7 +105,7 @@ const updateBackground = () => {
   document.body.style.backgroundColor = backgroundColor.value;
 };
 
-const clearSessionStorage = () => {
+const clearLocalStorage = () => {
   if (window.confirm("是否清除自动保存的内容？存储的图片和预设不受影响\n当出现诡异bug的时候可以碰碰运气")) {
     localStorage.clear();
     location.reload();
@@ -136,6 +138,10 @@ const loadPreset = async (presetId) => {
 
 const onPresetRowClick = (event) => {
   loadPreset(event.data.id);
+  new Howl({
+    src: ["/sfx/click_default.wav"],
+    volume: 1,
+  }).play();
 };
 
 const renamePreset = async () => {
@@ -168,28 +174,51 @@ const showRenameDialog = () => {
   }
 };
 
-const exportPresets = () => {
-  if (selectedPresets.value && selectedPresets.value.length > 0) {
-    selectedPresets.value.forEach(preset => {
-      const blob = new Blob([JSON.stringify(preset)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${preset.name}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  } else {
-    const currentData = GetData();
-    const blob = new Blob([JSON.stringify({ name: moment().format('YYYY/MM/DD_HH:mm:ss'), data: currentData, saveTime: new Date() }, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = moment().format('YYYY/MM/DD_HH:mm:ss') + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
+
+
+// helper to strip characters not allowed in filenames
+function sanitizeFilename(name) {
+  if (!name) return ''
+  return String(name).replace(/[:\/\\\?\%\"\*\<\>\|]/g, '-').trim()
+}
+
+const exportPresets = async () => {
+  const now = moment().format('YYYY-MM-DD_HH-mm-ss') // safe-for-files format
+  const sel = (selectedPresets && selectedPresets.value) ? selectedPresets.value : []
+
+  // >1 selected -> zip
+  if (sel.length > 1) {
+    const zip = new JSZip()
+    sel.forEach(preset => {
+      const fname = sanitizeFilename(preset.name) || `preset-${now}`
+      zip.file(`${fname}.json`, JSON.stringify(preset, null, 2))
+    })
+
+    const blob = await zip.generateAsync({ type: 'blob' })
+    saveAs(blob, `${now}.zip`)
+    return
   }
-};
+
+  // exactly 1 selected -> single json file
+  if (sel.length === 1) {
+    const preset = sel[0]
+    const fname = sanitizeFilename(preset.name) || now
+    const blob = new Blob([JSON.stringify(preset, null, 2)], { type: 'application/json' })
+    saveAs(blob, `${fname}.json`)
+    return
+  }
+
+  // none selected -> export current data as named json
+  const currentData = GetData()
+  const exportObj = {
+    name: now,
+    data: currentData,
+    saveTime: new Date()
+  }
+  const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' })
+  saveAs(blob, `${now}.json`)
+}
+
 
 const importPresets = async (event) => {
   const files = event.files;

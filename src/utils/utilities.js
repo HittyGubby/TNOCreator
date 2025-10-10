@@ -42,6 +42,7 @@ export function GetData() {
     imageElements: [],
     pieChartData: JSON.parse(JSON.stringify(state.chartData)),
     windows: JSON.parse(JSON.stringify(state.windows)),
+    spiritPictures: JSON.parse(JSON.stringify(state.spiritPictures)), //idb does not recognize vue reactive ref, so stringify and parse to turn to normal object
   };
 
   document.querySelectorAll(":root .text").forEach((element) => {
@@ -55,9 +56,9 @@ export function GetData() {
     data.imageElements.push({
       id: element.id,
       src: element.src,
+      scale: element.style.scale,
     });
   });
-
 
   return data;
 }
@@ -77,8 +78,14 @@ export function SetData(data) {
       const element = document.getElementById(item.id);
       if (element) {
         element.src = item.src;
+        element.style.scale = item.scale || 1;
       }
     });
+  }
+
+  // Handle pictures data
+  if (data.spiritPictures) {
+    state.spiritPictures = data.spiritPictures;
   }
 
   if (data.pieChartData) {
