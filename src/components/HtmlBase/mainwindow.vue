@@ -5,6 +5,7 @@ import { ref, onMounted } from "vue";
 import PicManager from "@/components/Controller/PicManager.vue";
 import { mousePosition } from "../../composables/useMousePosition.js";
 import { state } from "@/utils/state.js";
+import { Howl } from 'howler';
 
 const editorVisible = ref(false);
 const picManagerVisible = ref(false);
@@ -44,6 +45,20 @@ const handlePicClick = (event) => {
 onMounted(() => {
   document.addEventListener("click", handlePicClick);
 });
+
+const handleClose = () => {
+  new Howl({
+    src: ["/sfx/click_window_close.wav"],
+    volume: 1,
+  }).play();
+};
+
+const handleShow = () => {
+  new Howl({
+    src: ["/sfx/click_window_open.wav"],
+    volume: 1,
+  }).play();
+};
 </script>
 
 <template>
@@ -272,7 +287,7 @@ onMounted(() => {
     </div>
   </div>
   <Dialog v-model:visible="editorVisible" header="饼图编辑"
-    :style="{ width: '600px', fontFamily: 'Aldrich, FZRui', opacity: 0.9 }">
+    :style="{ width: '600px', fontFamily: 'Aldrich, FZRui', opacity: 0.9 }" @hide="handleClose" @show="handleShow">
     <ChartEditor v-model="state.chartData" />
   </Dialog>
   <PicManager v-model:visible="picManagerVisible" :type="picManagerType" :targetId="picManagerTargetId"

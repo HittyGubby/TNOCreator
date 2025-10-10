@@ -1,7 +1,7 @@
 <template>
     <Dialog v-model:visible="dialogVisible"
         :style="{ width: '70%', maxWidth: '90%', fontFamily: 'Aldrich, FZRui', opacity: 0.9 }"
-        :header="'图片管理 - ' + type" class="pic-manager-dialog" :closable="true">
+        :header="'图片管理 - ' + type" class="pic-manager-dialog" :closable="true" @hide="handleClose" @show="handleShow">
         <div class="pic-manager-container">
             <div v-if="!type" class="no-type-message">请先点击要修改的图片</div>
             <template v-else>
@@ -19,7 +19,7 @@
                             :rowClass="rowClass" @row-click="onVanillaRowClick" :paginator="true" :rows="10"
                             :rowsPerPageOptions="[10, 20, 50, 100]"
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink JumpToPageInput RowsPerPageDropdown "
-                            currentPageReportTemplate="显示 {first} 到 {last} 条，共 {totalRecords} 条" size="small">
+                            currentPageReportTemplate="显示 {first} 到 {last} 条，共 {totalRecords} 条" size="small" rowHover>
                             <Column headerStyle="width: 4rem" field="preview" header="预览">
                                 <template #body="slotProps">
                                     <img :src="getVanillaPicUrl(slotProps.data)" alt="预览" style="
@@ -29,7 +29,11 @@
                     " />
                                 </template>
                             </Column>
-                            <Column field="filename" header="文件名"></Column>
+                            <Column field="filename" header="文件名">
+                                <template #body="slotProps">
+                                    <span :title="slotProps.data.filename">{{ slotProps.data.filename }}</span>
+                                </template>
+                            </Column>
                         </DataTable>
                     </TabPanel>
                     <TabPanel header="自定义图片">
@@ -51,13 +55,12 @@
                         <div class="table-container">
                             <DataTable v-model:selection="selectedCustomPic" :value="filteredCustomPics"
                                 :scrollable="true" scrollHeight="flex" class="p-datatable-sm compact-table"
-                                :rowClass="rowClass" @row-click="onCustomRowClick" :reorderableRows="!searchQuery"
-                                @rowReorder="onRowReorder" :paginator="true" :rows="10"
+                                :rowClass="rowClass" @row-click="onCustomRowClick" :paginator="true" :rows="10"
                                 :rowsPerPageOptions="[10, 20, 50, 100]"
                                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink JumpToPageInput RowsPerPageDropdown "
-                                currentPageReportTemplate="显示 {first} 到 {last} 条，共 {totalRecords} 条" size="small">
+                                currentPageReportTemplate="显示 {first} 到 {last} 条，共 {totalRecords} 条" size="small"
+                                rowHover>
                                 <Column selectionMode="multiple" headerStyle="width: 2rem"></Column>
-                                <Column rowReorder style="width: 2rem" :reorderable="!searchQuery"></Column>
                                 <Column headerStyle="width: 4rem" field="preview" header="预览">
                                     <template #body="slotProps">
                                         <img :src="slotProps.data.url" alt="预览" style="
@@ -67,7 +70,11 @@
                       " />
                                     </template>
                                 </Column>
-                                <Column field="filename" header="文件名"></Column>
+                                <Column field="filename" header="文件名">
+                                    <template #body="slotProps">
+                                        <span :title="slotProps.data.filename">{{ slotProps.data.filename }}</span>
+                                    </template>
+                                </Column>
                                 <Column field="uploadTime" header="上传时间">
                                     <template #body="slotProps">
                                         {{ formatDate(slotProps.data.uploadTime) }}
@@ -124,6 +131,7 @@ import FileUpload from "primevue/fileupload";
 import { useIndexedDB } from "@/composables/useIndexedDB";
 import { formatDate, formatFileSize } from "@/utils/format";
 import { saveData } from "@/utils/onload";
+import { Howl } from "howler";
 
 const props = defineProps({
     visible: {
@@ -212,7 +220,10 @@ const onVanillaRowClick = (event) => {
         url: getVanillaPicUrl(event.data),
         scale: props.resizable ? pictureScale.value : undefined,
     });
-    saveData();
+    new Howl({
+        src: ["/sfx/click_default.wav"],
+        volume: 1,
+    }).play();
 };
 
 const onCustomRowClick = (event) => {
@@ -221,7 +232,10 @@ const onCustomRowClick = (event) => {
         url: event.data.url,
         scale: props.resizable ? pictureScale.value : undefined,
     });
-    saveData();
+    new Howl({
+        src: ["/sfx/click_default.wav"],
+        volume: 1,
+    }).play();
 };
 
 const showRenameDialog = () => {
@@ -282,16 +296,27 @@ const removePic = async () => {
     selectedCustomPic.value = null;
 };
 
-const onRowReorder = async (event) => {
-    customPics.value = event.data;
-};
-
 const getVanillaPicUrl = (pic) => {
-    return `/data/${props.type}/${pic.filename}.png`;
+    return `/data/${props.type}/${pic.filename}`;
 };
 
 const rowClass = (data) => {
     return { "cursor-pointer": true };
+};
+
+const handleClose = () => {
+    new Howl({
+        src: ["/sfx/click_window_close.wav"],
+        volume: 1,
+    }).play();
+    saveData();
+};
+
+const handleShow = () => {
+    new Howl({
+        src: ["/sfx/click_window_open.wav"],
+        volume: 1,
+    }).play();
 };
 
 const handleScaleChange = (event) => {

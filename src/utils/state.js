@@ -42,6 +42,32 @@ export const state = reactive({
       rotation: 90,
     },
   },
+  spiritPictures: [
+    {
+      id: 1,
+      url: "/preset/Reich_GER_idea_GER_endsieg_old.png",
+      filename: "Reich_GER_idea_GER_endsieg_old",
+      scale: 1.0
+    },
+    {
+      id: 2,
+      url: "/preset/Reich_GER_idea_GER_gone_over.png",
+      filename: "Reich_GER_idea_GER_gone_over",
+      scale: 1.0
+    },
+    {
+      id: 3,
+      url: "/preset/Reich_GER_idea_GER_the_two_principles.png",
+      filename: "Reich_GER_idea_GER_the_two_principles",
+      scale: 1.0
+    },
+    {
+      id: 4,
+      url: "/preset/Reich_GER_idea_GER_to_banish_want.png",
+      filename: "Reich_GER_idea_GER_to_banish_want",
+      scale: 1.0
+    }
+  ],
   windows: {
     main: {
       name: "主窗口",
@@ -86,7 +112,7 @@ export const state = reactive({
     economy: {
       name: "经济",
       x: 525,
-      y: 5,
+      y: 165,
       w: 1,
       h: 1,
       zIndex: 1,
@@ -97,6 +123,16 @@ export const state = reactive({
       name: "事件",
       x: 1410,
       y: 0,
+      w: 1,
+      h: 1,
+      zIndex: 1,
+      visible: true,
+      active: false,
+    },
+    spirit: {
+      name: "国家精神",
+      x: 525,
+      y: 5,
       w: 1,
       h: 1,
       zIndex: 1,

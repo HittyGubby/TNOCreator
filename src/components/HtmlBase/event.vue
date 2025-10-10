@@ -8,7 +8,6 @@ const picManagerTargetId = ref("");
 const picManagerResizable = ref(false);
 let zIndexCounter = 10;
 
-// Refs for dynamic sizing
 const eventBodyRef = ref(null);
 const tileCount = ref(3);
 const tileHeight = 111;
@@ -28,7 +27,6 @@ const calculateTileCount = () => {
     });
 };
 
-// Create an array of tile indices for v-for
 const tileIndices = computed(() => {
     return Array.from({ length: tileCount.value }, (_, i) => i);
 });
