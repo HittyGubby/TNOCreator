@@ -22,7 +22,12 @@ onMounted(() => {
     mousePosition.up.x = e.clientX;
     mousePosition.up.y = e.clientY;
   });
-  initApp();
+  try {
+    initApp();
+  } catch (error) {
+    localStorage.clear();
+    location.reload();
+  }
 });
 
 const settingsVisible = ref(false);
@@ -55,7 +60,8 @@ const handleShow = () => {
 </script>
 
 <template>
-  <div id="app-container" @click.self="openSettings" style="width: 100vw; height: 100vh;">
+  <div id="app-container" @click.self="openSettings" @touchstart.self="openSettings"
+    style="width: 100vw; height: 100vh;">
     <DraggableResizableVue v-show="state.windows.main.visible" v-model:active="state.windows.main.active"
       :z="state.windows.main.zIndex" @activated="bringToFront('main')" class="window" :draggable=false>
       <MainWindow />
