@@ -3,6 +3,10 @@ import { state } from "./state.js";
 
 export function Edittext(el) {
   if (el.dataset.editing) return;
+  new Howl({
+    src: ["/sfx/click_province_01.wav"],
+    volume: 1,
+  }).play();
   el.dataset.editing = "true";
   const rawHTML = el.innerHTML;
   const editable = el.cloneNode(true);
@@ -26,6 +30,10 @@ export function Edittext(el) {
     el.style.display = "";
     delete el.dataset.editing;
     editable.remove();
+    new Howl({
+      src: ["/sfx/click_ok.wav"],
+      volume: 1,
+    }).play();
     saveData();
   });
   editable.addEventListener("keydown", (e) => {
