@@ -1,5 +1,7 @@
 import { saveData } from "./onload.js";
 import { state } from "./state.js";
+import _ from 'lodash';
+import { Howl } from "howler";
 
 export function Edittext(el) {
   if (el.dataset.editing) return;
@@ -93,15 +95,15 @@ export function SetData(data) {
 
   // Handle pictures data
   if (data.spiritPictures) {
-    state.spiritPictures = data.spiritPictures;
+    state.spiritPictures = _.merge([], state.spiritPictures, data.spiritPictures);
   }
 
   if (data.pieChartData) {
-    state.chartData = data.pieChartData;
+    state.chartData = _.merge({}, state.chartData, data.pieChartData);
   }
 
   if (data.windows) {
-    state.windows = data.windows;
+    state.windows = _.merge({}, state.windows, data.windows);
   }
 
 }

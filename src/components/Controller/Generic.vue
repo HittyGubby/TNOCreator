@@ -20,7 +20,7 @@
         </div>
         <div class="toggle-item">
           <Button label="截图" @click="capture" />
-          <Button label="清除缓存" @click="clearLocalStorage" severity="danger" />
+          <Button label="清除缓存" @click="clearCache" severity="danger" />
         </div>
       </div>
     </div>
@@ -91,9 +91,12 @@ defineProps({
   draggable: Boolean,
 });
 
+import { useAutosaveDB } from "@/composables/useAutosaveDB";
+
 defineEmits(['update:draggable']);
 
 const { getAllPresets, addPreset, deletePreset, updatePreset } = usePresetDB();
+const { clearAutoSave } = useAutosaveDB();
 
 const backgroundColor = ref("#0b0012");
 const presets = ref([]);
@@ -105,9 +108,10 @@ const updateBackground = () => {
   document.body.style.backgroundColor = backgroundColor.value;
 };
 
-const clearLocalStorage = () => {
+const clearCache = () => {
   if (window.confirm("是否清除自动保存的内容？存储的图片和预设不受影响\n当出现诡异bug的时候可以碰碰运气")) {
     localStorage.clear();
+    clearAutoSave();
     location.reload();
   }
 };

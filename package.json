@@ -24,6 +24,7 @@
     "html2canvas": "^1.4.1",
     "jszip": "^3.10.1",
     "live-server": "^1.2.2",
+    "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "pinia": "^3.0.3",
     "primeicons": "^7.0.0",

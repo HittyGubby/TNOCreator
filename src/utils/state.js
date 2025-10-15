@@ -66,7 +66,7 @@ export const state = reactive({
       url: "/preset/Reich_GER_idea_GER_to_banish_want.png",
       filename: "Reich_GER_idea_GER_to_banish_want",
       scale: 1.0
-    }
+    },
   ],
   windows: {
     main: {
