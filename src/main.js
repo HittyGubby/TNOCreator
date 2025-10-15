@@ -2,6 +2,7 @@ import "./assets/main.css";
 
 import { createApp } from "vue";
 import App from "./App.vue";
+import { useDB } from "@/composables/useDB.js";
 
 import PrimeVue from "primevue/config";
 import Aura from "@primeuix/themes/aura";
@@ -17,16 +18,19 @@ import {
   FileUpload,
 } from "primevue";
 
-const app = createApp(App);
-app.component("Button", Button);
-app.component("Dialog", Dialog);
-app.component("ToggleSwitch", ToggleSwitch);
-app.component("TabView", TabView);
-app.component("TabPanel", TabPanel);
-app.component("DataTable", DataTable);
-app.component("Column", Column);
-app.component("InputText", InputText);
-app.component("FileUpload", FileUpload);
-app.use(PrimeVue, { theme: { preset: Aura } });
+const { initDB } = useDB();
+initDB().then(() => {
+  const app = createApp(App);
+  app.component("Button", Button);
+  app.component("Dialog", Dialog);
+  app.component("ToggleSwitch", ToggleSwitch);
+  app.component("TabView", TabView);
+  app.component("TabPanel", TabPanel);
+  app.component("DataTable", DataTable);
+  app.component("Column", Column);
+  app.component("InputText", InputText);
+  app.component("FileUpload", FileUpload);
+  app.use(PrimeVue, { theme: { preset: Aura } });
 
-app.mount("#app");
+  app.mount("#app");
+});

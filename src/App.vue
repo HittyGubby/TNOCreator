@@ -12,6 +12,8 @@ import Economy from "./components/HtmlBase/economy.vue";
 import Spirit from "./components/HtmlBase/spirit.vue";
 import { state } from "@/utils/state.js";
 import { Howl } from "howler";
+import { usePresetDB } from "@/composables/usePresetDB";
+const { clearAutoSave } = usePresetDB();
 
 onMounted(() => {
   document.addEventListener("mousedown", (e) => {
@@ -26,6 +28,7 @@ onMounted(() => {
     initApp();
   } catch (error) {
     localStorage.clear();
+    clearAutoSave();
     location.reload();
   }
 });

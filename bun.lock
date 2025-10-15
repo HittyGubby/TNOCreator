@@ -18,6 +18,7 @@
         "html2canvas": "^1.4.1",
         "jszip": "^3.10.1",
         "live-server": "^1.2.2",
+        "lodash": "^4.17.21",
         "moment": "^2.30.1",
         "pinia": "^3.0.3",
         "primeicons": "^7.0.0",
@@ -582,6 +583,8 @@
     "live-server": ["live-server@1.2.2", "", { "dependencies": { "chokidar": "^2.0.4", "colors": "1.4.0", "connect": "^3.6.6", "cors": "latest", "event-stream": "3.3.4", "faye-websocket": "0.11.x", "http-auth": "3.1.x", "morgan": "^1.9.1", "object-assign": "latest", "opn": "latest", "proxy-middleware": "latest", "send": "latest", "serve-index": "^1.9.1" }, "bin": { "live-server": "live-server.js" } }, "sha512-t28HXLjITRGoMSrCOv4eZ88viHaBVIjKjdI5PO92Vxlu+twbk6aE0t7dVIaz6ZWkjPilYFV6OSdMYl9ybN2B4w=="],
 
     "local-pkg": ["local-pkg@1.1.1", "", { "dependencies": { "mlly": "^1.7.4", "pkg-types": "^2.0.1", "quansync": "^0.2.8" } }, "sha512-WunYko2W1NcdfAFpuLUoucsgULmgDBRkdxHxWQ7mK0cQqwPiy8E1enjuRBrhLtZkB5iScJ1XIPdhVEFK8aOLSg=="],
+
+    "lodash": ["lodash@4.17.21", "", {}, "sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg=="],
 
     "lru-cache": ["lru-cache@5.1.1", "", { "dependencies": { "yallist": "^3.0.2" } }, "sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w=="],
 
