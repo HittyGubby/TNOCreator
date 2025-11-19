@@ -11,7 +11,7 @@ let zIndexCounter = 10;
 const handlePicClick = (event) => {
   const distance = Math.sqrt(
     Math.pow(mousePosition.up.x - mousePosition.down.x, 2) +
-      Math.pow(mousePosition.up.y - mousePosition.down.y, 2)
+    Math.pow(mousePosition.up.y - mousePosition.down.y, 2)
   );
 
   if (distance > 5) {
@@ -111,11 +111,11 @@ onMounted(() => {
         德国内战
       </p>
     </div>
-    <p id="supermotto" class="text" style="
+    <span id="supermotto" class="text" style="
         text-shadow: 1px 1px 2px black;
         position: absolute;
         left: 120px;
-        top: 550px;
+        top: 580px;
         z-index: 5;
         color: #ffffff;
         inline-size: 900px;
@@ -128,6 +128,6 @@ onMounted(() => {
       因此，所有人都必须认识到这一点：<br />与国家的存在相比，他的自我毫无意义。
       <br />
       - 阿道夫·希特勒
-    </p>
+    </span>
   </div>
 </template>

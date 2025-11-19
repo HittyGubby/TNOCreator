@@ -10,16 +10,16 @@ export function Edittext(el) {
     volume: 1,
   }).play();
   el.dataset.editing = "true";
-  const rawHTML = el.innerHTML;
+  const originalHTML = el.innerHTML;
   const editable = el.cloneNode(true);
-  editable.textContent = el.innerHTML;
+  editable.textContent = el.innerHTML.replace(/<br\s*\/?>/gi, "\n");
   editable.setAttribute("contenteditable", true);
   el.style.display = "none";
   el.parentNode.insertBefore(editable, el);
   editable.focus();
   editable.addEventListener("input", () => {
     if (editable.textContent.trim()) {
-      el.innerHTML = editable.textContent;
+      el.innerHTML = editable.textContent.replace(/\n/g, "<br/>");
       // el.innerHTML = el.innerHTML.replace('[[country]]', `<span style='color:yellow'>${document.getElementById('country').textContent}</span>`)
       //   .replace('[[leader]]', `<span style='color:yellow'>${document.getElementById('leader').textContent}</span>`)
       //   .replace('[[flag]]', `<img src='${document.getElementById('flagpic').src}' style='height: 10px'/>`);
@@ -27,7 +27,7 @@ export function Edittext(el) {
   });
   editable.addEventListener("blur", () => {
     if (!editable.innerHTML.trim()) {
-      el.innerHTML = editable.innerHTML = rawHTML;
+      el.innerHTML = editable.innerHTML = originalHTML;
     }
     el.style.display = "";
     delete el.dataset.editing;
@@ -37,12 +37,6 @@ export function Edittext(el) {
       volume: 1,
     }).play();
     saveData();
-  });
-  editable.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      editable.blur();
-    }
   });
 }
 
@@ -95,11 +89,11 @@ export function SetData(data) {
 
   // Handle pictures data
   if (data.spiritPictures) {
-    state.spiritPictures = _.merge([], state.spiritPictures, data.spiritPictures);
+    state.spiritPictures = data.spiritPictures;
   }
 
   if (data.pieChartData) {
-    state.chartData = _.merge({}, state.chartData, data.pieChartData);
+    state.chartData = data.pieChartData;
   }
 
   if (data.windows) {
