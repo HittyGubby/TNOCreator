@@ -32,10 +32,6 @@ export function Edittext(el) {
     el.style.display = "";
     delete el.dataset.editing;
     editable.remove();
-    new Howl({
-      src: ["/sfx/click_ok.wav"],
-      volume: 1,
-    }).play();
     saveData();
   });
 }
