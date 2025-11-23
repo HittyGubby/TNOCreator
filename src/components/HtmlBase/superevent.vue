@@ -82,7 +82,7 @@ onMounted(() => {
         border: none;
         width: 359px;
         height: 36px;
-        font-family: FZWH, Bombard;
+        font-family: Bombard, FZWH;
         font-size: 21px;
         color: #cccccc;
         z-index: 5;
@@ -123,7 +123,6 @@ onMounted(() => {
         font-size: 35px;
         text-align: right;
         white-space: pre-line;
-        letter-spacing: -2px;
       ">
       因此，所有人都必须认识到这一点：<br />与国家的存在相比，他的自我毫无意义。
       <br />
