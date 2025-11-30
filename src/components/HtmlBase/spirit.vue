@@ -8,7 +8,7 @@ const backgroundHeight = ref(0);
 
 const calculateBackgroundHeight = () => {
   nextTick(() => {
-    backgroundHeight.value = Math.max(1, parseFloat(window.getComputedStyle(document.querySelector('.spirit-icons-container')).height.replace('px', '')) - 15);
+    backgroundHeight.value = Math.max(20, parseFloat(window.getComputedStyle(document.querySelector('.spirit-icons-container')).height.replace('px', '')) - 15);
   });
 };
 
@@ -67,6 +67,8 @@ const onImageLoad = (spirit, event) => {
         top: 23px;
         left: 15px;
         right: 15px;
+        min-width: 20px;
+        min-height: 20px;
         z-index: 3;
         display: flex;
         flex-wrap: wrap;

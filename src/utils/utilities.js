@@ -19,7 +19,7 @@ export function Edittext(el) {
   editable.focus();
   editable.addEventListener("input", () => {
     if (editable.textContent.trim()) {
-      el.innerHTML = editable.textContent.replace(/\n/g, "<br/>");
+      el.innerHTML = editable.innerHTML.replace(/<div><br><\/div>/g, "<br/>").replace(/\n/g, "<br/>").replace(/&nbsp;/g, "<br/>").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
       // el.innerHTML = el.innerHTML.replace('[[country]]', `<span style='color:yellow'>${document.getElementById('country').textContent}</span>`)
       //   .replace('[[leader]]', `<span style='color:yellow'>${document.getElementById('leader').textContent}</span>`)
       //   .replace('[[flag]]', `<img src='${document.getElementById('flagpic').src}' style='height: 10px'/>`);
