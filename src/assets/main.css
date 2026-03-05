@@ -1,22 +1,26 @@
 @font-face {
   font-family: FZRui;
-  src: url(/fonts/FZRuiZHJW.ttf) format("truetype");
+  src: url(/fonts/FZRuiZHJW.woff2) format("woff2");
 }
+
 @font-face {
   font-family: Aldrich;
-  src: url(/fonts/Aldrich-Regular.ttf) format("truetype");
+  src: url(/fonts/Aldrich-Regular.woff2) format("woff2");
 }
+
 @font-face {
   font-family: FZWH;
-  src: url(/fonts/FZWH.TTF) format("truetype");
+  src: url(/fonts/FZWH.woff2) format("woff2");
 }
+
 @font-face {
   font-family: Bombard;
-  src: url(/fonts/BOMBARD_.ttf) format("truetype");
+  src: url(/fonts/BOMBARD_.woff2) format("woff2");
 }
+
 @font-face {
   font-family: OldTypeNr;
-  src: url(/fonts/OldTyperNr.ttf) format("truetype");
+  src: url(/fonts/OldTyperNr.woff2) format("woff2");
 }
 
 label {
@@ -28,6 +32,6 @@ label {
   user-select: none;
 }
 
-*{
+* {
   cursor: url(/template/embark.png), auto;
 }
